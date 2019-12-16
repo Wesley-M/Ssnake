@@ -18,6 +18,7 @@ class Grid {
         this._height = 40;
         this.goal = [];
         this.paused = true;
+        this.vision_field = 8;
 
         this.clear();
         this.setGoal();
@@ -41,14 +42,11 @@ class Grid {
         let snakeHead = snake[0];
         let headX = snakeHead[1], headY = snakeHead[0];
 
-        let maxX = 8;
-        let maxY = 8;
-
         // Redraw grid
         for (let i = 0; i < this._height; i++) {
             for (let j = 0; j < this._width; j++) {
                 let distanceFromHead = Math.sqrt( ((i - headX) ** 2) + ((j - headY) ** 2) );
-                if (distanceFromHead >= 10) {
+                if (distanceFromHead >= this.vision_field) {
                     this._grid[i][j] = HIDDEN_CELL;
                 } else {
                     this._grid[i][j] = BACK_CELL;
@@ -112,6 +110,7 @@ class Snake {
     constructor(grid, view) {
         this.grid = grid;
         this.view = view;
+        this.velocity = 1000/10;
         this.init();
     }
 
@@ -119,7 +118,7 @@ class Snake {
         this.currentDirection = "down";
         this.snake = [[0,0], [0,1]];
         this.handleEvents();
-        this.framesInterval = setInterval(this.move, 1000/10);
+        this.framesInterval = setInterval(this.move, this.velocity);
     }
 
     move = () => {
