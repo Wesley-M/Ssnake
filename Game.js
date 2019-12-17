@@ -16,12 +16,12 @@ class Grid {
         this._grid = [];
         this._width = 60;
         this._height = 40;
-        this.goal = [];
+        this.goals = [];
         this.paused = true;
         this.vision_field = 8;
 
         this.clear();
-        this.setGoal();
+        this.setGoals({numberOfGoals: Math.random() * 5});
     }
 
     clear = function() {
@@ -54,10 +54,12 @@ class Grid {
             }
         }
 
-        // Place the goal again
-        if (this._grid[this.goal[0]][this.goal[1]] != HIDDEN_CELL) {
-            this._grid[this.goal[0]][this.goal[1]] = GOAL_CELL;
-        }
+        // Place the goals again
+        this.goals.forEach(goal => {
+            if (this._grid[goal[0]][goal[1]] != HIDDEN_CELL) {
+                this._grid[goal[0]][goal[1]] = GOAL_CELL;
+            }
+        });
 
         // Redraw snake
         snake.forEach(coordinate => {
@@ -69,15 +71,16 @@ class Grid {
         });
     }
 
-    setGoal = function(snake = [[0,0], [0,1]]) {
+    setGoals = function({snake = [[0,0], [0,1]], numberOfGoals = 3}) {
         let x = parseInt(Math.random() * this.height);
         let y = parseInt(Math.random() * this.width);
 
-        if (includes(snake, [x,y])) {
-            this.setGoal(snake);
-        } else {
+        if (includes(snake, [y,x])) {
+            this.setGoals({snake, numberOfGoals});
+        } else if (numberOfGoals > 0) {
             this._grid[x][y] = GOAL_CELL;
-            this.goal = [x, y];
+            this.goals.push([x, y]);
+            this.setGoals({snake, numberOfGoals: (numberOfGoals - 1)});
         }
     }
 
@@ -111,6 +114,7 @@ class Snake {
         this.grid = grid;
         this.view = view;
         this.velocity = 1000/10;
+        this.min_goals = 2;
         this.init();
     }
 
@@ -127,8 +131,10 @@ class Snake {
             let newHead = this._getNewHead(); // Calculating coordinates of new head
 
             if (this.hitGoal(newHead)) {
-                this.grid.grid[this.grid.goal[0]][this.grid.goal[1]] = 0;
-                this.grid.setGoal(this.snake);
+
+                if (this.grid.goals.length < this.min_goals) {
+                    this.grid.setGoals({snake: this.snake});
+                }
                 
                 this.appendToTail();
 
@@ -177,7 +183,21 @@ class Snake {
     }
 
     hitGoal = function(head) {
-        return (head.toString() == this.grid.goal.slice().reverse().toString());
+        let hit = false;
+        this.grid.goals.forEach(goal => {
+            if (head.toString() == goal.slice().reverse().toString()) {
+                hit = true;
+
+                // Setting old goal as normal cell
+                this.grid.grid[goal[0]][goal[1]] = BACK_CELL;
+
+                // Removing from goals
+                this.grid.goals = this.grid.goals.filter((val, index, array) => {
+                    return val.toString() != [goal[0], goal[1]].toString();
+                });
+            }
+        });
+        return hit;
     }
 
     hasCrashed = function(head) {
