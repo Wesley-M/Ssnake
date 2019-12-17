@@ -10,101 +10,163 @@ const INITIAL_SNAKE_LENGTH = 2;
 const MIN_SPEED = 8;
 const DEFAULT_SPEED = 10;
 const DEFAULT_VISION_FIELD = 8;
+const MINIMUM_VISION_FIELD = 6;
 
 class Goal {
     constructor(snake, grid) {
-        this.possibleEffects = {
-            NORMAL_POINT: "normal",
-            INCREASE_SPEED: 'increase_speed',
-            DECREASE_SPEED: 'decrease_speed',
-            MINUS3: 'minus3',
-            PLUS3: 'plus3',
-            INCREASE_RATIO: 'increase_ratio'
-        }
-
         this.snake = snake;
         this.grid = grid;
+
+        this.init();
+
         this.coordinate = this.randomCoordinate(); 
         this.effect = this.randomEffect();
+    }
+
+    init() {
+        const PROB_NORMAL = 0.7;
+        const PROB_RARE = 0.2;
+        const PROB_SUPER_RARE = 0.1;
+
+        this.possibleEffects = {
+            NORMAL_POINT:   {
+                'effect': 'normal_point', 
+                'prob': PROB_NORMAL, 
+                'func': this.normal_point
+            },
+            INCREASE_SPEED: {
+                'effect': 'increase_speed', 
+                'prob': PROB_SUPER_RARE,
+                'func': this.increase_speed
+            }, 
+            DECREASE_SPEED: {
+                'effect': 'decrease_speed', 
+                'prob': PROB_RARE,
+                'func': this.decrease_speed
+            },
+            MINUS3: {
+                'effect': 'minus3', 
+                'prob': PROB_RARE,
+                'func': this.minus3
+            },
+            PLUS3: {
+                'effect': 'plus3', 
+                'prob': PROB_SUPER_RARE,
+                'func': this.plus3
+            },
+            DECREASE_RATIO: {
+                'effect': 'decrease_ratio', 
+                'prob': PROB_RARE,
+                'func': this.decrease_ratio
+            },
+            INCREASE_RATIO: {
+                'effect': 'increase_ratio', 
+                'prob': PROB_RARE,
+                'func': this.increase_ratio
+            }
+        }
     }
 
     randomCoordinate = function() {
         let x = parseInt(Math.random() * this.grid.height);
         let y = parseInt(Math.random() * this.grid.width);
 
+        // Ensure that the goal hasn't appeared below the snake
         if (includes(this.snake.snake, [y,x])) {
             this.randomCoordinate();
         }
-
-        console.log([x,y]);
-
+     
         return [x, y];
     }
 
     randomEffect() {
-        let randomP = Math.random();
-        
-        let effect = "";
-        
-        let tenPercent = randomP > 0.9 && randomP < 1;
-        let thirtyPercent = randomP >= 0 && randomP <= 0.3;
+        let randomProb = Math.random();
 
-        if (tenPercent) {
-            let randomE = Math.random();
-            if (randomE <= 0.33) {
-                effect = this.possibleEffects.PLUS3;
-            } else if (randomE <= 0.66){
-                effect = this.possibleEffects.INCREASE_RATIO;
-            } else {
-                effect = this.possibleEffects.MINUS3;
+        let probabilities = this.getProbabilitiesFromEffects();
+        let probOfevent = this.getProbOfEvent(randomProb, probabilities);
+        let effectsToChoose = [];
+
+        // Get all the effects that happen with this probability
+        Object.keys(this.possibleEffects).forEach(name => {
+            if (this.possibleEffects[name]["prob"] == probOfevent) {
+                effectsToChoose.push(this.possibleEffects[name]["effect"]);
             }
-        } else if (thirtyPercent)  {
-            let randomE = Math.random();
-            if (randomE < 0.5) {
-                effect = this.possibleEffects.INCREASE_SPEED;
-            } else {
-                effect = this.possibleEffects.DECREASE_SPEED;
+        });
+
+        let randomIndex = parseInt(effectsToChoose.length * Math.random());
+
+        return effectsToChoose[randomIndex];
+    }
+
+    getProbOfEvent(randomProb, probabilities) {
+        let start = 0;
+
+        for (let i = 0; i < probabilities.length; i++) {
+            let interval_end = (start + probabilities[i]);
+            if (randomProb >= start && randomProb < interval_end) {
+                return (interval_end - start).toFixed(3);
             }
-        } else {
-            effect = this.possibleEffects.NORMAL_POINT;
+            start += probabilities[i];  
         }
 
-        return effect;
+        return -1;
+    }
+
+    getProbabilitiesFromEffects() {
+        let repeatedProbabilities = Object.keys(this.possibleEffects).map(effectName => {
+            return this.possibleEffects[effectName]['prob'];
+        });
+
+        let uniqueProbabilities = Array.from(new Set(repeatedProbabilities)).sort();
+
+        return uniqueProbabilities;
     }
 
     applyEffect() {
-        switch(this.effect) {
-            case this.possibleEffects.PLUS3:
-                for (let i = 0; i < 3; i++) {
-                    this.snake.appendToTail();
-                }
-                break;
-            case this.possibleEffects.INCREASE_RATIO:
-                this.snake.grid.vision_field += 3;
-                break;
-            case this.possibleEffects.MINUS3:
-                for (let i = 0; i < 3; i++) {
-                    if (this.snake.length > INITIAL_SNAKE_LENGTH) {
-                        this.snake.removeFromTail();
-                    }
-                }
-                break;
-            case this.possibleEffects.INCREASE_SPEED:
-                clearInterval(this.snake.framesInterval);
-                this.snake.velocity += 4;
-                this.snake.framesInterval = setInterval(this.snake.move, 1000/this.snake.velocity);
-                break;
-            case this.possibleEffects.DECREASE_SPEED:
-                if (this.snake.velocity > MIN_SPEED) {
-                    clearInterval(this.snake.framesInterval);
-                    this.snake.velocity -= 4;
-                    console.log(this.snake.velocity);
-                    this.snake.framesInterval = setInterval(this.snake.move, 1000/this.snake.velocity);
-                }
-                break;
-            case this.possibleEffects.NORMAL_POINT:
-                this.snake.appendToTail();
-                break;
+        this.possibleEffects[this.effect.toUpperCase()]['func']();
+    }
+
+    // ******** Effects functions ******* //
+
+    normal_point = () => {
+        this.snake.appendToTail();
+    }
+
+    plus3 = () => {
+        for (let i = 0; i < 3; i++) {
+            this.snake.appendToTail();
+        }
+    }
+
+    minus3 = () => {
+        for (let i = 0; i < 3; i++) {
+            if (this.snake.length > INITIAL_SNAKE_LENGTH) {
+                this.snake.removeFromTail();
+            }
+        }
+    }
+
+    increase_ratio = () => {
+        this.snake.grid.vision_field += 3;
+    }
+
+    decrease_ratio = () => {
+        if (this.snake.grid.vision_field > MINIMUM_VISION_FIELD) {
+            this.snake.grid.vision_field -= 3;
+        }
+    }
+
+    increase_speed = () => {
+        clearInterval(this.snake.framesInterval);
+        this.snake.velocity += 4;
+        this.snake.framesInterval = setInterval(this.snake.move, 1000/this.snake.velocity);
+    }
+
+    decrease_speed = () => {
+        if (this.snake.velocity > MIN_SPEED) {
+            clearInterval(this.snake.framesInterval);
+            this.snake.velocity -= 4;
+            this.snake.framesInterval = setInterval(this.snake.move, 1000/this.snake.velocity);
         }
     }
 
@@ -145,11 +207,15 @@ class Grid {
     }
 
     redraw = function(snake) {
+        redrawGrid();
+        placeGoals();
+        redrawSnake();
+    }
 
+    redrawGrid = () => {
         let snakeHead = snake[0];
         let headX = snakeHead[1], headY = snakeHead[0];
 
-        // Redraw grid
         for (let i = 0; i < this._height; i++) {
             for (let j = 0; j < this._width; j++) {
                 let distanceFromHead = Math.sqrt( ((i - headX) ** 2) + ((j - headY) ** 2) );
@@ -160,15 +226,9 @@ class Grid {
                 }
             }
         }
-
-        // Place the goals again
-        this.goals.forEach(goal => {
-            if (this._grid[goal.coordinate[0]][goal.coordinate[1]] != cellType.HIDDEN_CELL) {
-                this._grid[goal.coordinate[0]][goal.coordinate[1]] = goal;
-            }
-        });
-
-        // Redraw snake
+    }
+    
+    redrawSnake = () => {
         snake.forEach(coordinate => {
             let x = coordinate[0];
             let y = coordinate[1];
@@ -178,8 +238,15 @@ class Grid {
         });
     }
 
-    setGoals = ({snake, numberOfGoals = 3}) => {
-        console.log(snake);
+    placeGoals = () => {
+        this.goals.forEach(goal => {
+            if (this._grid[goal.coordinate[0]][goal.coordinate[1]] != cellType.HIDDEN_CELL) {
+                this._grid[goal.coordinate[0]][goal.coordinate[1]] = goal;
+            }
+        });
+    }
+
+    setGoals = ({snake, numberOfGoals = 5}) => {
         for (let i = 0; i < numberOfGoals; i++) {
             let goal = new Goal(snake, this);
             this._grid[goal.coordinate[0]][goal.coordinate[1]] = goal;
@@ -220,7 +287,7 @@ class Snake {
         this.min_goals = 2;
         this.score = 0;
         this.init();
-        this.grid.setGoals({snake: this, numberOfGoals: Math.random() * 5});
+        this.grid.setGoals({snake: this, numberOfGoals: (Math.random() * 5) + 5 });
     }
 
     init = function() {
@@ -376,23 +443,26 @@ class View {
 
                 if (cell instanceof Goal) {
                     switch(cell.effect) {
-                        case cell.possibleEffects.NORMAL_POINT:
+                        case cell.possibleEffects.NORMAL_POINT['effect']:
                             td.classList.add("normal-point-goal-cell");
                             break;
-                        case cell.possibleEffects.PLUS3:
+                        case cell.possibleEffects.PLUS3['effect']:
                             td.classList.add("plus-three-goal-cell");
                             break;
-                        case cell.possibleEffects.MINUS3:
+                        case cell.possibleEffects.MINUS3['effect']:
                             td.classList.add("minus-three-goal-cell");
                             break;
-                        case cell.possibleEffects.INCREASE_SPEED:
+                        case cell.possibleEffects.INCREASE_SPEED['effect']:
                             td.classList.add("increase-speed-goal-cell");
                             break;
-                        case cell.possibleEffects.DECREASE_SPEED:
+                        case cell.possibleEffects.DECREASE_SPEED['effect']:
                             td.classList.add("decrease-speed-goal-cell");
                             break;
-                        case cell.possibleEffects.INCREASE_RATIO: 
+                        case cell.possibleEffects.INCREASE_RATIO['effect']: 
                             td.classList.add("increase-ratio-goal-cell");
+                            break;
+                        case cell.possibleEffects.DECREASE_RATIO['effect']: 
+                            td.classList.add("decrease-ratio-goal-cell");
                             break;
                     }
                 }

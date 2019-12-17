@@ -104,6 +104,12 @@ table td {
     border-radius: 10px;
 }
 
+.decrease-ratio-goal-cell {
+    background-color: rgb(231, 100, 13);
+    border: none;
+    border-radius: 10px;
+}
+
 .minus-three-goal-cell {
     background-color: rgb(204, 6, 6);
     border: none;
