@@ -157,6 +157,7 @@ class Snake {
             }
         }
 
+        document.querySelector("#score-value").innerHTML = this.snake.length - 2;
         this.view.render();  // Rendering game
     }
 
