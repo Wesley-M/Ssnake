@@ -437,14 +437,20 @@ class Snake {
             }
         });
 
-        // Handle hammer events
-        var hammertime = new Hammer(document.body);
-        hammertime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
-        hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
-            var typeOfEvent = ev.type.split("swipe")[1];
-            if (["up", "down", "left", "right"].includes(typeOfEvent)) {
-                this.currentDirection = typeOfEvent;
-            }
+        document.querySelector("#control .up").addEventListener('click', (e) =>  {
+            this.currentDirection = "up";
+        });
+
+        document.querySelector("#control .left").addEventListener('click', (e) =>  {
+            this.currentDirection = "left";
+        });
+
+        document.querySelector("#control .right").addEventListener('click', (e) =>  {
+            this.currentDirection = "right";
+        });
+
+        document.querySelector("#control .down").addEventListener('click', (e) =>  {
+            this.currentDirection = "down";
         });
     }
 
