@@ -430,6 +430,16 @@ class Snake {
                 this.currentDirection = "right";
             }
         });
+
+        // Handle hammer events
+        var hammertime = new Hammer(document.body);
+        hammertime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+        hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
+            var typeOfEvent = ev.type.split("swipe")[1];
+            if (["up", "down", "left", "right"].includes(typeOfEvent)) {
+                this.currentDirection = typeOfEvent;
+            }
+        });
     }
 
     get length() {
