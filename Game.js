@@ -177,13 +177,13 @@ const cellType = {
     BACK_CELL: 0,
     SNAKE_CELL: 1,
     GOAL_CELL: Goal,
-    HIDDEN_CELL: 3
+    HIDDEN_CELL: 2
 }
 
 class Grid {
     constructor() {
-        this._height = 40;
-        this._width = 60;
+        this._height = 50;
+        this._width = 70;
         
         this._grid = [];
         this.goals = [];
