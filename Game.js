@@ -124,6 +124,7 @@ class Goal {
 
     applyEffect() {
         this.possibleEffects[this.effect.toUpperCase()]['func']();
+        SOUNDS["hit"].play();
     }
 
     // ******** Effects functions ******* //
@@ -159,14 +160,14 @@ class Goal {
     increase_speed = () => {
         clearInterval(this.snake.framesInterval);
         this.snake.velocity += 4;
-        this.snake.framesInterval = setInterval(this.snake.move, 1000/this.snake.velocity);
+        this.snake.framesInterval = setInterval(this.snake.update, 1000/this.snake.velocity);
     }
 
     decrease_speed = () => {
         if (this.snake.velocity > MIN_SPEED) {
             clearInterval(this.snake.framesInterval);
             this.snake.velocity -= 4;
-            this.snake.framesInterval = setInterval(this.snake.move, 1000/this.snake.velocity);
+            this.snake.framesInterval = setInterval(this.snake.update, 1000/this.snake.velocity);
         }
     }
 
@@ -196,23 +197,21 @@ class Grid {
     clear = function() {
         this._grid = [];
         let row = [];
-
-        for (let j = 0; j < this.width; j++) {
-            row.push(0);
+        for (let j = 0; j < this.width; j++) { 
+            row.push(0); 
         }
-
-        for (let i = 0; i < this.height; i++) {
-            this._grid.push(row.slice());
+        for (let i = 0; i < this.height; i++) { 
+            this._grid.push(row.slice()); 
         }
     }
 
     redraw = function(snake) {
-        redrawGrid();
-        placeGoals();
-        redrawSnake();
+        this.redrawGrid(snake);
+        this.placeGoals();
+        this.redrawSnake(snake);
     }
 
-    redrawGrid = () => {
+    redrawGrid = (snake) => {
         let snakeHead = snake[0];
         let headX = snakeHead[1], headY = snakeHead[0];
 
@@ -228,7 +227,7 @@ class Grid {
         }
     }
     
-    redrawSnake = () => {
+    redrawSnake = (snake) => {
         snake.forEach(coordinate => {
             let x = coordinate[0];
             let y = coordinate[1];
@@ -283,62 +282,74 @@ class Snake {
     constructor(grid, view) {
         this.grid = grid;
         this.view = view;
-        this.velocity = DEFAULT_SPEED;
-        this.min_goals = 2;
         this.score = 0;
+        this.min_goals = 4;
+        this.velocity = DEFAULT_SPEED;
+        
         this.init();
+        
         this.grid.setGoals({snake: this, numberOfGoals: (Math.random() * 5) + 5 });
     }
 
     init = function() {
-        this.currentDirection = "down";
+        this.snake = [[0,0], [0,1]];
         this.velocity = DEFAULT_SPEED;
         this.grid.vision_field = DEFAULT_VISION_FIELD;
-        this.snake = [[0,0], [0,1]];
+        this.currentDirection = "down";
+        this.framesInterval = setInterval(this.update, 1000/this.velocity);
         this.handleEvents();
-        this.framesInterval = setInterval(this.move, 1000/this.velocity);
+    }
+
+    update = () => {
+        let isPaused = this.grid.paused;
+
+        if (!isPaused) {
+            let goalHited = this.move();
+            let goalWasHited = goalHited != null;
+
+            if (goalWasHited) {
+                this.setNewGoals();       // Setting new goals
+                goalHited.applyEffect();  // Applying effect of goal
+            }
+            
+            if (this.hasCrashed()) { this.restart(); }
+
+            this.score = this.snake.length - INITIAL_SNAKE_LENGTH; // Setting score
+            this.view.update(this);                                // Rendering game
+        }
+
+        console.log(this.velocity);
+    }
+
+    restart = () => {
+        this.init();                        // Reinit snake
+        this.grid.paused = true;            // Pause game
+        SOUNDS["background"].stop();        // Pause the background music
+        this.view.togglePlayScreen();       // Show the play screen
+        clearInterval(this.framesInterval); // Clearing frames interval
     }
 
     move = () => {
-        if (!this.grid.paused) {
-            this.snake.pop();                 // Removing tail
-            let newHead = this._getNewHead(); // Calculating coordinates of new head
-
-            let hit = this.hitGoal(newHead);
-
-            if (hit != null) {
-
-                if (this.grid.goals.length < this.min_goals) {
-                    this.grid.setGoals({snake: this});
-                }
-                
-                hit.applyEffect();
-
-                this.snake.unshift(newHead);
-                this.grid.redraw(this.snake);
-
-                SOUNDS["hit"].stop();
-                SOUNDS["hit"].play();
-            } else {
-                if (this.hasCrashed(newHead)) {
-                    this.init();                          // Restarting
-                    this.grid.paused = true;
-                    SOUNDS["background"].stop();
-                    this.view.togglePlayScreen();
-                    clearInterval(this.framesInterval);   // Clearing frames interval
-                } else {
-                    this.snake.unshift(newHead);       // Setting new head
-                    this.grid.redraw(this.snake); // Updating grid
-                }
-            }
+        let newHead = this.getNewHead();  // Calculating coordinates of new head
+        let hit = this.checkHit(newHead); // Check and catch a hit 
+        
+        if (!this.hasCrashed()) {
+            this.snake.pop();              // Removing tail
+            this.snake.unshift(newHead);   // Appending new head
+            this.grid.redraw(this.snake);  // Redrawing screen
         }
 
-        this.score = this.snake.length - INITIAL_SNAKE_LENGTH;
-
-        this.view.render(this);  // Rendering game
+        return hit;
     }
 
-    _getNewHead = function() {
+    setNewGoals = () => {
+        let needNewGoals = this.grid.goals.length < this.min_goals;
+        if (needNewGoals) { 
+            this.grid.setGoals({snake: this}); 
+        }
+    }
+
+    getNewHead = function() {
         let oldHead = this.snake[0];        // Getting old head
         let x = oldHead[0], y = oldHead[1]; // Old head coordinates
 
@@ -360,13 +371,11 @@ class Snake {
         return newHead;
     }
 
-    hitGoal = function(head) {
+    checkHit = function(head) {
         let hit = null;
         this.grid.goals.forEach(goal => {
             if (head.toString() == goal.coordinate.slice().reverse().toString()) {
                 hit = goal;
-
-                console.log(goal.effect);
 
                 // Setting old goal as normal cell
                 this.grid.grid[goal.coordinate[0]][goal.coordinate[1]] = cellType.BACK_CELL;
@@ -380,8 +389,16 @@ class Snake {
         return hit;
     }
 
-    hasCrashed = function(head) {
-        return includes(this.snake, head);
+    hasCrashed = () => {
+        let head = this.snake[0];
+        
+        let elementsEqualsToHead = this.snake.filter(el => {
+            if (el.toString() === head.toString()) {
+                return true;
+            }
+        });
+
+        return elementsEqualsToHead.length >= 2;
     }
 
     appendToTail = function() {
@@ -416,65 +433,78 @@ class Snake {
 // Used to render the game
 class View {
     constructor(grid) {
+        this.init();
+        
         this.table = document.querySelector("table");
         this.grid = grid;
+        this.lastGrid = this.copyGrid(grid.grid);
+
         this.handleEvents();
+        this.renderTable();
     }
 
-    render = function(snake) {
-        this.table.innerHTML = "";
+    init() {
+        // Mapping of goals to cell classes
+        this.cellEffectsToClasses = {
+            'normal_point': 'normal-point-goal-cell',
+            'plus3': 'plus-three-goal-cell',
+            'minus3': 'minus-three-goal-cell',
+            'increase_speed': 'increase-speed-goal-cell',
+            'decrease_speed': 'decrease-speed-goal-cell',
+            'increase_ratio': 'increase-ratio-goal-cell',
+            'decrease_ratio': 'decrease-ratio-goal-cell'
+        };
+
+        this.cellTypesToClasses = [
+            'back-cell',
+            'snake-cell',
+            'hidden-cell'
+        ];
+
+    }
+
+    renderTable() {
         for (let i = 0; i < this.grid.grid.length; i++) {
             let tr = document.createElement("tr");
             for (let j = 0; j < this.grid.grid[0].length; j++) {
                 let td = document.createElement("td");
-                
-                let cell = this.grid.grid[i][j];
-                switch(cell) {
-                    case cellType.BACK_CELL:
-                        td.classList.add("back-cell");
-                        break;
-                    case cellType.SNAKE_CELL:
-                        td.classList.add("snake-cell");
-                        break;
-                    case cellType.HIDDEN_CELL:
-                        td.classList.add("hidden-cell");
-                        break;
-                }
-
-                if (cell instanceof Goal) {
-                    switch(cell.effect) {
-                        case cell.possibleEffects.NORMAL_POINT['effect']:
-                            td.classList.add("normal-point-goal-cell");
-                            break;
-                        case cell.possibleEffects.PLUS3['effect']:
-                            td.classList.add("plus-three-goal-cell");
-                            break;
-                        case cell.possibleEffects.MINUS3['effect']:
-                            td.classList.add("minus-three-goal-cell");
-                            break;
-                        case cell.possibleEffects.INCREASE_SPEED['effect']:
-                            td.classList.add("increase-speed-goal-cell");
-                            break;
-                        case cell.possibleEffects.DECREASE_SPEED['effect']:
-                            td.classList.add("decrease-speed-goal-cell");
-                            break;
-                        case cell.possibleEffects.INCREASE_RATIO['effect']: 
-                            td.classList.add("increase-ratio-goal-cell");
-                            break;
-                        case cell.possibleEffects.DECREASE_RATIO['effect']: 
-                            td.classList.add("decrease-ratio-goal-cell");
-                            break;
-                    }
-                }
-
+                this.changeCellClass(td, this.grid.grid[i][j]);
                 tr.appendChild(td);
             }
             this.table.appendChild(tr);
         }
+    }
 
-        document.querySelector("main").appendChild(this.table);
-
+    update = function(snake) {
+        let gridCoordinates = this.grid.grid;
+        for (let i = 0; i < gridCoordinates.length; i++) {
+            for (let j = 0; j < gridCoordinates[0].length; j++) {
+                if (gridCoordinates[i][j] != this.lastGrid[i][j]) {
+                    this.changeCellClass(this.table.rows[i].cells[j], gridCoordinates[i][j]);
+                }
+            }
+        }
+        this.lastGrid = this.copyGrid(gridCoordinates);
         document.querySelector("#score-value").innerHTML = snake.score;
+    }
+
+    changeCellClass = (td, gridCell) => {
+        let styleClass = "";
+        if (gridCell instanceof Goal) {
+            styleClass = this.cellEffectsToClasses[gridCell.effect];
+        } else {
+            styleClass = this.cellTypesToClasses[gridCell];
+        }
+        // Remove all classes
+        td.className = '';
+        // Add style class
+        td.classList.add(styleClass);
+    }
+
+    copyGrid = (grid) => {
+        return grid.map((g) => {
+            return g.slice();
+        });
     }
 
     togglePlayScreen = function() {
