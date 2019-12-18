@@ -239,7 +239,7 @@ class Grid {
 
     placeGoals = () => {
         this.goals.forEach(goal => {
-            if (this._grid[goal.coordinate[0]][goal.coordinate[1]] != cellType.HIDDEN_CELL) {
+            if (this._grid[goal.coordinate[0]][goal.coordinate[1]] === cellType.BACK_CELL) {
                 this._grid[goal.coordinate[0]][goal.coordinate[1]] = goal;
             }
         });
@@ -317,8 +317,6 @@ class Snake {
             this.score = this.snake.length - INITIAL_SNAKE_LENGTH; // Setting score
             this.view.update(this);                                // Rendering game
         }
-
-        console.log(this.velocity);
     }
 
     restart = () => {
@@ -402,9 +400,18 @@ class Snake {
     }
 
     appendToTail = function() {
-        let xTail = this.snake[this.snake.length - 1][0], yTail = this.snake[this.snake.length - 1][1];
-        let newTail = [xTail + 1, yTail];
-        this.snake.push(newTail);
+        let xTail = this.snake[this.snake.length - 1][0];
+        let yTail = this.snake[this.snake.length - 1][1];
+        
+        // Mapping of current direction to new tail
+        const newTail = {
+            'up'   : [xTail, yTail + 1], 
+            'left' : [xTail + 1, yTail],
+            'right': [xTail - 1, yTail],
+            'down' : [xTail, yTail - 1]
+        };
+
+        this.snake.push(newTail[this.currentDirection]);
     }
 
     removeFromTail = function() {

@@ -30,14 +30,12 @@ main {
 table {
     border: 2px solid rgb(66, 66, 66);
     border-radius: 5px;
-    border-spacing: 1px;
     padding: 0;
     background: rgb(36, 36, 36);
 }
 
 table td {
     padding: 4px;
-    border: 0.5px solid rgba(206, 204, 204, 0.781);
 }
 
 #view {
