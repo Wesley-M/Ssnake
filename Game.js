@@ -182,8 +182,14 @@ const cellType = {
 
 class Grid {
     constructor() {
+
         this._height = 50;
         this._width = 70;
+
+        if (window.matchMedia("(max-width:600px)").matches) {
+            this._height = 60;
+            this._width = 40;
+        }
         
         this._grid = [];
         this.goals = [];
