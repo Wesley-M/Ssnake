@@ -437,21 +437,23 @@ class Snake {
             }
         });
 
-        document.querySelector("#control .up").addEventListener('click', (e) =>  {
-            this.currentDirection = "up";
+        let joystick	= new VirtualJoystick({
+            container	: document.querySelector('body'),
+            mouseSupport: false
         });
 
-        document.querySelector("#control .left").addEventListener('click', (e) =>  {
-            this.currentDirection = "left";
-        });
+        setInterval(function(){
+            if (joystick.up()) {
+                this.currentDirection = "up";
+            } else if (joystick.down()) {
+                this.currentDirection = "down";
+            } else if (joystick.left()) {
+                this.currentDirection = "left";
+            } else {
+                this.currentDirection = "right";
+            }
+        }, 1/30 * 1000);
 
-        document.querySelector("#control .right").addEventListener('click', (e) =>  {
-            this.currentDirection = "right";
-        });
-
-        document.querySelector("#control .down").addEventListener('click', (e) =>  {
-            this.currentDirection = "down";
-        });
     }
 
     get length() {
