@@ -437,11 +437,28 @@ class Snake {
             }
         });
 
-        var dynamic = nipplejs.create({
+        var joystick = nipplejs.create({
             zone: document.querySelector('table'),
-            color: 'blue'
+            mode: 'static',
+            position: {left: '75%', top: '85%'},
+            color: 'white'
         });
 
+        joystick.on('dir:up', () => {
+            this.currentDirection = "up";
+        })
+
+        joystick.on('dir:down', () => {
+            this.currentDirection = "down";
+        })
+
+        joystick.on('dir:left', () => {
+            this.currentDirection = "left";
+        })
+
+        joystick.on('dir:right', () => {
+            this.currentDirection = "right";
+        })
     }
 
     get length() {

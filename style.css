@@ -33,7 +33,7 @@ table {
     border-spacing: 0px;
     padding: 0;
     background: white;
-    z-index: -999;
+    position: static;
 }
 
 table td {
