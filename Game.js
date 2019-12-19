@@ -2,8 +2,9 @@ import Sound from './Sound.js'
 
 // Load and set sound variables
 const SOUNDS = {
-    "background"   : new Sound("snd/back.mp3", 0.3, true),
-    "hit"          : new Sound("snd/hit.wav", 0.4, false)
+    "background"   : new Sound("snd/back.mp3", 0.4, true),
+    "hit"          : new Sound("snd/hit.wav", 0.5, false),
+    "gameover"     : new Sound("snd/game_over.ogg", 0.4, false)
 }
 
 const INITIAL_SNAKE_LENGTH = 2;
@@ -183,8 +184,8 @@ const cellType = {
 class Grid {
     constructor() {
 
-        this._height = 50;
-        this._width = 70;
+        this._height = 40;
+        this._width = 60;
 
         if (window.matchMedia("(max-width:600px)").matches) {
             this._height = 50;
@@ -337,8 +338,10 @@ class Snake {
         this.init();                        // Reinit snake
         this.grid.paused = true;            // Pause game
         SOUNDS["background"].stop();        // Pause the background music
-        this.view.togglePlayScreen();       // Show the play screen
-        clearInterval(this.framesInterval); // Clearing frames interval
+        SOUNDS["background"].resetTime();
+        this.view.addGameOverScreen();      // Show the game over screen
+        SOUNDS["gameover"].play();          // Play the game over music
+        this.velocity = DEFAULT_SPEED;      // Setting default speed
     }
 
     move = () => {
@@ -489,7 +492,7 @@ class View {
         this.grid = grid;
         this.lastGrid = this.copyGrid(grid.grid);
 
-        this.handleEvents();
+        this.addPlayScreen();
         this.renderTable();
     }
 
@@ -557,21 +560,31 @@ class View {
         });
     }
 
-    togglePlayScreen = function() {
-        let display = document.querySelector("#view").style.display;
-        if (display === "none") {
-            display = "flex";
-        } else {
-            display = "none";
-        }
-        document.querySelector("#view").style.display = display;
+    addPlayScreen = function() {
+        let screen = document.querySelector(".view");
+        screen.innerHTML = '<button class="play-btn">PLAY</button>';
+        screen.style.display = "flex";
+        this.addPlayEvent();
     }
 
-    handleEvents = function() {
+    addGameOverScreen = () => {
+        let screen = document.querySelector(".view");
+        screen.innerHTML = '<p>Game Over</p> <button class="play-btn">RESTART</button>';
+        screen.style.display = "flex";
+        this.addPlayEvent();
+    }
+
+    hideScreens = () => {
+        document.querySelector(".view").style.display = "none";
+    }
+
+    addPlayEvent = function() {
         document.querySelector(".play-btn").addEventListener("click", () => {
+            this.hideScreens();
             this.grid.paused = false;
-            this.togglePlayScreen();
             SOUNDS["background"].play();
+            SOUNDS["gameover"].stop();
+            SOUNDS["gameover"].resetTime();
         });
     }
     

@@ -26,6 +26,10 @@ export default class Sound {
     this.running = false;
   }
 
+  resetTime() {
+    this._audioElement.currentTime = 0;
+  }
+
   loop(type) {
     this._audioElement.loop = type;
   }

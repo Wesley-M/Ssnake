@@ -40,18 +40,24 @@ table td {
     padding: 4px;
 }
 
-#view {
-    width: 200px;
+.view {
+    width: 300px;
     height: 200px;
     position: fixed;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-#view.disable {
+.view.dim {
     background-color: rgba(0, 0, 0, 0.7);
+}
+
+.view p {
+    color: white;
+    font-size: 2em;
 }
 
 .play-btn {
