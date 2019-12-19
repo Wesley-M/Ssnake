@@ -304,6 +304,13 @@ class Snake {
         this.currentDirection = "down";
         this.framesInterval = setInterval(this.update, 1000/this.velocity);
         this.handleEvents();
+
+        this.oppositeDirection = {
+            "up": "down",
+            "left": "right",
+            "right": "left",
+            "down": "up"
+        }
     }
 
     update = () => {
@@ -326,6 +333,7 @@ class Snake {
     }
 
     restart = () => {
+        clearInterval(this.framesInterval); // Clearing frames interval
         this.init();                        // Reinit snake
         this.grid.paused = true;            // Pause game
         SOUNDS["background"].stop();        // Pause the background music
@@ -334,9 +342,11 @@ class Snake {
     }
 
     move = () => {
+        let hit = null;
+
         let newHead = this.getNewHead();  // Calculating coordinates of new head
-        let hit = this.checkHit(newHead); // Check and catch a hit 
-        
+        hit = this.checkHit(newHead);     // Check and catch a hit 
+    
         if (!this.hasCrashed()) {
             this.snake.pop();              // Removing tail
             this.snake.unshift(newHead);   // Appending new head
@@ -426,13 +436,13 @@ class Snake {
 
     handleEvents = function() {
         document.addEventListener('keyup', (e) => {
-            if (e.code === "ArrowUp") {
+            if (e.code === "ArrowUp" && this.currentDirection !== "down") {
                 this.currentDirection = "up";
-            } else if (e.code === "ArrowDown") {
+            } else if (e.code === "ArrowDown" && this.currentDirection !== "up") {
                 this.currentDirection = "down";
-            } else if (e.code === "ArrowLeft") {
+            } else if (e.code === "ArrowLeft" && this.currentDirection !== "right") {
                 this.currentDirection = "left";
-            } else if (e.code === "ArrowRight") {
+            } else if (e.code === "ArrowRight" && this.currentDirection !== "left") {
                 this.currentDirection = "right";
             }
         });
@@ -445,18 +455,22 @@ class Snake {
         });
 
         joystick.on('dir:up', () => {
+            
             this.currentDirection = "up";
         })
 
         joystick.on('dir:down', () => {
+            
             this.currentDirection = "down";
         })
 
         joystick.on('dir:left', () => {
+            
             this.currentDirection = "left";
         })
 
         joystick.on('dir:right', () => {
+            
             this.currentDirection = "right";
         })
     }
