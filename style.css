@@ -91,6 +91,18 @@ table td {
     border-radius: 10px;
 }
 
+.death-goal-cell {
+    background-color:black;
+    border: none;
+    border-radius: 10px;
+}
+
+.key-goal-cell {
+    background-color: gold;
+    border: none;
+    border-radius: 10px;
+}
+
 .increase-speed-goal-cell {
     background-color: rgb(39, 204, 6);
     border: none;
@@ -98,7 +110,7 @@ table td {
 }
 
 .decrease-speed-goal-cell {
-    background-color: rgb(233, 219, 21);
+    background-color: rgb(80, 238, 217);
     border: none;
     border-radius: 10px;
 }

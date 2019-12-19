@@ -22,18 +22,35 @@ class Goal {
 
         this.coordinate = this.randomCoordinate(); 
         this.effect = this.randomEffect();
+        
+        if (this.effect === this.possibleEffects.KEY['effect']) { 
+            this.scheduleRemoveGoal(10000); 
+        }
     }
 
     init() {
-        const PROB_NORMAL = 0.7;
-        const PROB_RARE = 0.2;
-        const PROB_SUPER_RARE = 0.1;
+        const PROB_NORMAL = 0.9;
+
+        const RARE_PROBS = 1 - PROB_NORMAL;
+        const PROB_RARE = 0.7 * RARE_PROBS;
+        const PROB_SUPER_RARE = 0.3 * RARE_PROBS;
+        const PROB_HIPER_RARE = 0.1 * RARE_PROBS;
 
         this.possibleEffects = {
             NORMAL_POINT:   {
                 'effect': 'normal_point', 
                 'prob': PROB_NORMAL, 
                 'func': this.normal_point
+            },
+            DEATH: {
+                'effect': 'death', 
+                'prob': PROB_NORMAL, 
+                'func': this.death
+            },
+            KEY: {
+                'effect': 'key', 
+                'prob': PROB_NORMAL,
+                'func': this.key
             },
             INCREASE_SPEED: {
                 'effect': 'increase_speed', 
@@ -130,8 +147,24 @@ class Goal {
 
     // ******** Effects functions ******* //
 
+    scheduleRemoveGoal(time) {
+        setTimeout(() => {
+            let newGoals = this.grid.goals.filter(e => e !== this);
+            this.grid.goals = newGoals;
+        }, time);
+    }
+
     normal_point = () => {
         this.snake.appendToTail();
+    }
+
+    death = () => {
+        this.snake.restart();
+    }
+
+    key = () => {
+        let win = new Event("win");
+        document.getElementById("game").dispatchEvent(win);
     }
 
     plus3 = () => {
@@ -481,6 +514,7 @@ class View {
 
         this.addPlayScreen();
         this.renderTable();
+        this.handleEvents();
     }
 
     init() {
@@ -492,7 +526,9 @@ class View {
             'increase_speed': 'increase-speed-goal-cell',
             'decrease_speed': 'decrease-speed-goal-cell',
             'increase_ratio': 'increase-ratio-goal-cell',
-            'decrease_ratio': 'decrease-ratio-goal-cell'
+            'decrease_ratio': 'decrease-ratio-goal-cell',
+            'death': 'death-goal-cell',
+            'key': 'key-goal-cell'
         };
 
         this.cellTypesToClasses = [
@@ -504,6 +540,7 @@ class View {
     }
 
     renderTable() {
+        this.table.innerHTML = "";
         for (let i = 0; i < this.grid.grid.length; i++) {
             let tr = document.createElement("tr");
             for (let j = 0; j < this.grid.grid[0].length; j++) {
@@ -561,6 +598,14 @@ class View {
         this.addPlayEvent();
     }
 
+    addWinScreen = () => {
+        let screen = document.querySelector(".view");
+        screen.innerHTML = '<p>You\'ve got a key</p> <button class="play-btn">CONTINUE</button>';
+        screen.style.display = "flex";
+        this.grid.paused = true;
+        this.addPlayEvent();
+    }
+
     hideScreens = () => {
         document.querySelector(".view").style.display = "none";
     }
@@ -572,6 +617,12 @@ class View {
             SOUNDS["background"].play();
             SOUNDS["gameover"].stop();
             SOUNDS["gameover"].resetTime();
+        });
+    }
+
+    handleEvents() {
+        document.getElementById("game").addEventListener('win', (e) => {
+            this.addWinScreen();
         });
     }
     
