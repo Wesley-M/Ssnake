@@ -439,43 +439,30 @@ class Snake {
 
     handleEvents = function() {
         document.addEventListener('keyup', (e) => {
-            if (e.code === "ArrowUp" && this.currentDirection !== "down") {
-                this.currentDirection = "up";
-            } else if (e.code === "ArrowDown" && this.currentDirection !== "up") {
-                this.currentDirection = "down";
-            } else if (e.code === "ArrowLeft" && this.currentDirection !== "right") {
-                this.currentDirection = "left";
-            } else if (e.code === "ArrowRight" && this.currentDirection !== "left") {
-                this.currentDirection = "right";
+            let direction = e.key.split("Arrow")[1].toLowerCase();
+            if (["up", "down", "left", "right"].includes(direction)) {
+                if (direction !== this.oppositeDirection[this.currentDirection]) {
+                    this.currentDirection = direction;
+                }
             }
         });
 
-        var joystick = nipplejs.create({
+        let joystick = this.newJoystick();
+        joystick.on('dir:up dir:down dir:left dir:right', (e) => {
+            let direction = e.type.split("dir:")[1];
+            if (direction !== this.oppositeDirection[this.currentDirection]) {
+                this.currentDirection = direction;
+            }
+        })
+    }
+
+    newJoystick() {
+        return nipplejs.create({
             zone: document.querySelector('table'),
             mode: 'static',
             position: {left: '75%', top: '85%'},
             color: 'white'
         });
-
-        joystick.on('dir:up', () => {
-            
-            this.currentDirection = "up";
-        })
-
-        joystick.on('dir:down', () => {
-            
-            this.currentDirection = "down";
-        })
-
-        joystick.on('dir:left', () => {
-            
-            this.currentDirection = "left";
-        })
-
-        joystick.on('dir:right', () => {
-            
-            this.currentDirection = "right";
-        })
     }
 
     get length() {
