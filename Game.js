@@ -4,7 +4,8 @@ import Sound from './Sound.js'
 const SOUNDS = {
     "background"   : new Sound("snd/back.mp3", 0.4, true),
     "hit"          : new Sound("snd/hit.wav", 0.5, false),
-    "gameover"     : new Sound("snd/game_over.ogg", 0.4, false)
+    "gameover"     : new Sound("snd/game_over.ogg", 0.4, false),
+    "key_falling"  : new Sound("snd/key.wav", 0.4, false)
 }
 
 const INITIAL_SNAKE_LENGTH = 2;
@@ -25,15 +26,18 @@ class Goal {
         
         if (this.effect === this.possibleEffects.KEY['effect']) { 
             this.scheduleRemoveGoal(10000); 
+            SOUNDS["key_falling"].play();
         }
+
+        console.log(this.effect);
     }
 
     init() {
-        const PROB_NORMAL = 0.9;
+        const PROB_NORMAL = 0.7;
 
         const RARE_PROBS = 1 - PROB_NORMAL;
         const PROB_RARE = 0.7 * RARE_PROBS;
-        const PROB_SUPER_RARE = 0.3 * RARE_PROBS;
+        const PROB_SUPER_RARE = 0.2 * RARE_PROBS;
         const PROB_HIPER_RARE = 0.1 * RARE_PROBS;
 
         this.possibleEffects = {
@@ -44,12 +48,12 @@ class Goal {
             },
             DEATH: {
                 'effect': 'death', 
-                'prob': PROB_NORMAL, 
+                'prob': PROB_RARE, 
                 'func': this.death
             },
             KEY: {
                 'effect': 'key', 
-                'prob': PROB_NORMAL,
+                'prob': PROB_HIPER_RARE,
                 'func': this.key
             },
             INCREASE_SPEED: {
@@ -104,9 +108,12 @@ class Goal {
         let probOfevent = this.getProbOfEvent(randomProb, probabilities);
         let effectsToChoose = [];
 
+        console.log(probabilities);
+        console.log(probOfevent)
+
         // Get all the effects that happen with this probability
         Object.keys(this.possibleEffects).forEach(name => {
-            if (this.possibleEffects[name]["prob"] == probOfevent) {
+            if (this.possibleEffects[name]["prob"].toFixed(3) == probOfevent) {
                 effectsToChoose.push(this.possibleEffects[name]["effect"]);
             }
         });
@@ -540,7 +547,6 @@ class View {
     }
 
     renderTable() {
-        this.table.innerHTML = "";
         for (let i = 0; i < this.grid.grid.length; i++) {
             let tr = document.createElement("tr");
             for (let j = 0; j < this.grid.grid[0].length; j++) {
@@ -572,9 +578,7 @@ class View {
         } else {
             styleClass = this.cellTypesToClasses[gridCell];
         }
-        // Remove all classes
         td.className = '';
-        // Add style class
         td.classList.add(styleClass);
     }
 
