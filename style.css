@@ -52,8 +52,9 @@ main {
     border-radius: 5px;
     border-spacing: 0px;
     padding: 0;
-    background: white;
     position: static;
+    background: white;
+    background: linear-gradient(45deg, #d8d0da, #ffffff);
 }
 
 #game-container table td {
@@ -98,7 +99,7 @@ main {
 }
 
 .back-cell {
-    background-color: rgb(241, 241, 241);
+    background-color: transparent;
 }
 
 .snake-cell {
@@ -107,57 +108,68 @@ main {
 }
 
 .normal-point-goal-cell {
-    background-color: rgb(121, 32, 148);
+    background-color: #792094;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #792094, #424242);
 }
 
 .death-goal-cell {
     background-color:black;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #000, #b3b3b3);
 }
 
 .key-goal-cell {
     background-color: gold;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #000, gold);
 }
 
 .increase-speed-goal-cell {
-    background-color: rgb(39, 204, 6);
+    background-color: #27cc06;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #27cc06, #1d1c1c);
 }
 
 .decrease-speed-goal-cell {
-    background-color: rgb(80, 238, 217);
+    background-color: #50eed9;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #50eed9, #1d1c1c);
+
 }
 
 .increase-ratio-goal-cell {
-    background-color: rgb(13, 133, 231);
+    background-color: #0d85e7;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #0d85e7, #1d1c1c);
 }
 
 .decrease-ratio-goal-cell {
-    background-color: rgb(231, 100, 13);
+    background-color: #e7640d;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #e7640d, #1d1c1c);
 }
 
 .minus-three-goal-cell {
-    background-color: rgb(204, 6, 6);
+    background-color: #cc0606;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #cc0606, #1d1c1c);
 }
 
 .plus-three-goal-cell {
-    background-color: rgb(204, 6, 204);
+    background-color: #cc06cc;
     border: none;
     border-radius: 10px;
+    background-image: radial-gradient(circle at 2px 2px, #cc06cc, #1d1c1c);
+
 }
 
 .hidden-cell {
