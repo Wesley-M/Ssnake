@@ -124,8 +124,6 @@ class Goal {
 
         let randomIndex = parseInt(effectsToChoose.length * Math.random());
 
-        console.log(effectsToChoose);
-
         return effectsToChoose[randomIndex];
     }
 
@@ -230,11 +228,11 @@ const cellType = {
 class Grid {
     constructor() {
 
-        this._height = 40;
-        this._width = 60;
+        this._height = 30;
+        this._width = 40;
 
-        if (window.matchMedia("(max-width:600px)").matches) {
-            this._height = 50;
+        if (window.matchMedia("(max-width:800px)").matches) {
+            this._height = 45;
             this._width = 40;
         }
         
@@ -499,21 +497,23 @@ class Snake {
             }
         });
 
-        let joystick = this.newJoystick();
-        joystick.on('dir:up dir:down dir:left dir:right', (e) => {
-            let direction = e.type.split("dir:")[1];
-            if (direction !== this.oppositeDirection[this.currentDirection]) {
-                this.currentDirection = direction;
-            }
-        })
+        if (window.matchMedia("(max-width:800px)").matches) {
+            let joystick = this.newJoystick();
+            joystick.on('dir:up dir:down dir:left dir:right', (e) => {
+                let direction = e.type.split("dir:")[1];
+                if (direction !== this.oppositeDirection[this.currentDirection]) {
+                    this.currentDirection = direction;
+                }
+            });
+        }
     }
 
     newJoystick() {
         return nipplejs.create({
             zone: document.querySelector('table'),
             mode: 'static',
-            position: {left: '75%', top: '85%'},
-            color: 'white'
+            position: {left: '85%', top: '90%'},
+            color: 'orange'
         });
     }
 
