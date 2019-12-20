@@ -512,9 +512,9 @@ class Snake {
         return nipplejs.create({
             zone: document.querySelector('table'),
             mode: 'static',
-            position: {left: '75%', top: '85%'},
-            color: 'orange',
-            size: 140
+            position: {left: '70%', top: '85%'},
+            color: 'white',
+            size: 135
         });
     }
 
