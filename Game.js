@@ -28,8 +28,6 @@ class Goal {
             this.scheduleRemoveGoal(10000); 
             SOUNDS["key_falling"].play();
         }
-
-        console.log(this.effect);
     }
 
     init() {
@@ -44,47 +42,56 @@ class Goal {
             NORMAL_POINT:   {
                 'effect': 'normal_point', 
                 'prob': PROB_NORMAL, 
-                'func': this.normal_point
+                'func': this.normal_point,
+                'type': 'positive'
             },
             DEATH: {
                 'effect': 'death', 
                 'prob': PROB_RARE, 
-                'func': this.death
+                'func': this.death,
+                'type': 'negative'
             },
             KEY: {
                 'effect': 'key', 
                 'prob': PROB_HIPER_RARE,
-                'func': this.key
+                'func': this.key,
+                'type': 'positive'
             },
             INCREASE_SPEED: {
                 'effect': 'increase_speed', 
                 'prob': PROB_SUPER_RARE,
-                'func': this.increase_speed
+                'func': this.increase_speed,
+                'type': 'positive'
             }, 
             DECREASE_SPEED: {
                 'effect': 'decrease_speed', 
                 'prob': PROB_RARE,
-                'func': this.decrease_speed
+                'func': this.decrease_speed,
+                'type': 'negative'
             },
             MINUS3: {
                 'effect': 'minus3', 
                 'prob': PROB_RARE,
-                'func': this.minus3
+                'func': this.minus3,
+                'type': 'negative'
             },
             PLUS3: {
                 'effect': 'plus3', 
                 'prob': PROB_SUPER_RARE,
-                'func': this.plus3
+                'func': this.plus3,
+                'type': 'positive'
             },
             DECREASE_RATIO: {
                 'effect': 'decrease_ratio', 
                 'prob': PROB_RARE,
-                'func': this.decrease_ratio
+                'func': this.decrease_ratio,
+                'type': 'negative'
             },
             INCREASE_RATIO: {
                 'effect': 'increase_ratio', 
                 'prob': PROB_RARE,
-                'func': this.increase_ratio
+                'func': this.increase_ratio,
+                'type': 'positive'
             }
         }
     }
@@ -107,9 +114,6 @@ class Goal {
         let probabilities = this.getProbabilitiesFromEffects();
         let probOfevent = this.getProbOfEvent(randomProb, probabilities);
         let effectsToChoose = [];
-
-        console.log(probabilities);
-        console.log(probOfevent)
 
         // Get all the effects that happen with this probability
         Object.keys(this.possibleEffects).forEach(name => {
@@ -400,7 +404,12 @@ class Snake {
     }
 
     setNewGoals = () => {
-        let needNewGoals = this.grid.goals.length < this.min_goals;
+        let positiveGoals = this.grid.goals.filter(g => {
+            return g.possibleEffects[g.effect.toUpperCase()].type === "positive";
+        });
+
+        let needNewGoals = positiveGoals.length < this.min_goals;
+        
         if (needNewGoals) { 
             this.grid.setGoals({snake: this}); 
         }
