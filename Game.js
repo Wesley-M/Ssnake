@@ -47,7 +47,7 @@ class Goal {
             },
             DEATH: {
                 'effect': 'death', 
-                'prob': PROB_RARE, 
+                'prob': PROB_SUPER_RARE, 
                 'func': this.death,
                 'type': 'negative'
             },
@@ -123,6 +123,8 @@ class Goal {
         });
 
         let randomIndex = parseInt(effectsToChoose.length * Math.random());
+
+        console.log(effectsToChoose);
 
         return effectsToChoose[randomIndex];
     }
@@ -405,6 +407,7 @@ class Snake {
 
     setNewGoals = () => {
         let positiveGoals = this.grid.goals.filter(g => {
+            console.log(g);
             return g.possibleEffects[g.effect.toUpperCase()].type === "positive";
         });
 
