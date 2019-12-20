@@ -26,7 +26,7 @@ main {
 }
 
 #game-container {
-    flex: 1;
+    flex: 2;
     background: rgb(63, 9, 114);
     color: white;
     display: flex;
@@ -41,10 +41,15 @@ main {
     color: white;
     padding: 5%;
     font-size: 1.1em;
+    overflow-y: auto;
 }
 
 .large-font {
     font-size: 2em;
+}
+
+.mid-font {
+    font-size: 1.5em;
 }
 
 #game-container table {
@@ -103,15 +108,16 @@ main {
 }
 
 .snake-cell {
-    background-color: rgb(45, 141, 26);
+    background-color: #2d8d1a;
     border: none;
+    border-radius: 1px;
 }
 
 .normal-point-goal-cell {
     background-color: #792094;
     border: none;
     border-radius: 10px;
-    background-image: radial-gradient(circle at 2px 2px, #792094, #424242);
+    background-image: radial-gradient(circle at 2px 2px, #b739dd, #000);
 }
 
 .death-goal-cell {
@@ -125,7 +131,7 @@ main {
     background-color: gold;
     border: none;
     border-radius: 10px;
-    background-image: radial-gradient(circle at 2px 2px, #000, gold);
+    background-image: radial-gradient(circle at 2px 2px, gold, #000);
 }
 
 .increase-speed-goal-cell {
@@ -197,5 +203,9 @@ main {
     .view {
         top: -35%;
         position: relative;
+    }
+
+    #tutorial {
+        overflow-y: unset;
     }
 }
