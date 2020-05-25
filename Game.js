@@ -1,11 +1,11 @@
-import Sound from './Sound.js'
+import Sound from './utils/Sound.js'
 
 // Load and set sound variables
 const SOUNDS = {
-    "background"   : new Sound("snd/back.mp3", 0.4, true),
-    "hit"          : new Sound("snd/hit.wav", 0.5, false),
-    "gameover"     : new Sound("snd/game_over.ogg", 0.4, false),
-    "key_falling"  : new Sound("snd/key.wav", 0.4, false)
+    "background"   : new Sound("res/snd/back.mp3", 0.4, true),
+    "hit"          : new Sound("res/snd/hit.wav", 0.5, false),
+    "gameover"     : new Sound("res/snd/game_over.ogg", 0.4, false),
+    "key_falling"  : new Sound("res/snd/key.wav", 0.4, false)
 }
 
 const INITIAL_SNAKE_LENGTH = 2;
@@ -228,8 +228,8 @@ const cellType = {
 class Grid {
     constructor() {
 
-        this._height = 30;
-        this._width = 40;
+        this._height = 35;
+        this._width = 30;
 
         if (window.matchMedia("(max-width:800px)").matches) {
             this._height = 45;
@@ -640,6 +640,61 @@ class View {
     handleEvents() {
         document.getElementById("game").addEventListener('win', (e) => {
             this.addWinScreen();
+        });
+
+        document.querySelector("#help-button").addEventListener('click', (e) => {
+            Swal.fire({
+                title: 'Instructions',
+                showCloseButton: true,
+                html: `  
+                    <div id="tutorial">
+                        <p>Hi! I am Wesley-M, the developer behind Ssnake, a game 
+                        based on the classical one, but with a new face! I hope 
+                        that the game will remind you of the fun of snake!</p>
+                        
+                        <p class="large-font">Here is the rules:</p>
+                        <ul>
+                            <li>Don't clash with your body (LoL)</li>
+                        </ul>
+        
+                        <p>As you will notice the balls have different colors, and each 
+                        color has an effect on your snake. </p>
+        
+                        <p class="mid-font">The possible effects are:</p>
+        
+                        <ul>
+                            <li>
+                                Game over instantenously
+                            </li>
+                            <li>
+                                Key to winning
+                            </li>
+                            <li>
+                                Increase ratio of vision field
+                            </li>
+                            <li>
+                                Decrease ratio of vision field
+                            </li>
+                            <li>
+                                Plus three points
+                            </li>
+                            <li>
+                                Minus three points
+                            </li>
+                            <li>
+                                Increase speed
+                            </li>
+                            <li>
+                                Decrease speed
+                            </li>
+                        </ul>
+        
+                        <p class="large-font center"> Discover the colors and its effects ^-^ </p>
+                    </div>
+                `,
+                icon: 'question',
+                confirmButtonText: 'Cool'
+            })
         });
     }
     

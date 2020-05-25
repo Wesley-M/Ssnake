@@ -8,63 +8,15 @@
     
     <title>Snake Game</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./res/main.css">
     <script type="module" src="./Game.js"></script>
 </head>
 <body>
-    
+    <header>
+        <p> Ssnake <button id="help-button"><img src="res/img/question-mark.png" alt="help"></button> </p> 
+    </header>
     <main>
-        <section id="tutorial">
-            <p class="large-font">Hi!</p> 
-            
-            <p>I am Wesley-M, the developer behind Ssnake, a game 
-               based on the classical one, but with a new face! I hope 
-               that the game will remind you of the fun of snake!</p>
-            
-            <p class="large-font">Here is the rules:</p>
-            <ul>
-                <li>Don't clash with your body (LoL)</li>
-            </ul>
-
-            <p>As you will notice the balls have different colors, and each 
-               color has an effect on your snake. </p>
-
-            <p class="mid-font">The possible effects are:</p>
-
-            <ul>
-                <li>
-                    Game over instantenously
-                </li>
-                <li>
-                    Key to winning
-                </li>
-                <li>
-                    Increase ratio of vision field
-                </li>
-                <li>
-                    Decrease ratio of vision field
-                </li>
-                <li>
-                    Plus three points
-                </li>
-                <li>
-                    Minus three points
-                </li>
-                <li>
-                    Increase speed
-                </li>
-                <li>
-                    Decrease speed
-                </li>
-            </ul>
-
-            <p class="large-font"> Discover the colors and its effects ^-^ </p>
-
-        </section>
-    
         <section id="game-container">
-            <p> Ssnake </p>
-
             <section id="game">
                 <table>
                 </table>
@@ -77,6 +29,7 @@
         </section>
     </main>
 
-    <script src="./nipplejs.js"></script>
+    <script src="./lib/nipplejs.js"></script>
+    <script src="./lib/sweetalert2.all.min.js"></script>
 </body>
 </html>
