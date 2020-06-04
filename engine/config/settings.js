@@ -1,0 +1,15 @@
+// Snake settings
+
+const INITIAL_SNAKE_LENGTH = 2;
+const DEFAULT_SPEED = 10;
+const MIN_SPEED = 8;
+const DEFAULT_VISION_FIELD = 8;
+const MIN_VISION_FIELD = 6;
+
+export {
+    POSSIBLE_PROBS,
+    POSSIBLE_FXS,
+    DEFAULT_PLUS,
+    DEFAULT_MINUS,
+    DEFAULT_INCREASE_VISION_RATIO
+};

@@ -1,4 +1,4 @@
-import Sound from './utils/Sound.js'
+import Sound from './engine/utils/Sound.js'
 
 // Load and set sound variables
 const SOUNDS = {
