@@ -1,0 +1,22 @@
+{
+  "name": "ssnake",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Game.js",
+  "scripts": {
+    "start": "budo src/index.js:build.js --live"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wesley-M/Ssnake.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wesley-M/Ssnake/issues"
+  },
+  "homepage": "https://github.com/Wesley-M/Ssnake#readme",
+  "dependencies": {
+    "budo": "^11.6.3"
+  }
+}

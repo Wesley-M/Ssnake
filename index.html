@@ -9,26 +9,12 @@
     <title>Snake Game</title>
 
     <link rel="stylesheet" href="./res/main.css">
-    <script type="module" src="./Game.js"></script>
 </head>
 <body>
-    <header>
-        <p> Ssnake <button id="help-button"><img src="res/img/question-mark.png" alt="help"></button> </p> 
-    </header>
-    <main>
-        <section id="game-container">
-            <section id="game">
-                <table>
-                </table>
-            </section>
-    
-            <div class="view dim">      
-            </div>
+    <div id="board">
+    </div>
 
-            <span id="score-value">0</span>
-        </section>
-    </main>
-
+    <script src="./src/index.js" type="module"></script>
     <script src="./vendor/nipplejs.js"></script>
     <script src="./vendor/sweetalert2.all.min.js"></script>
 </body>

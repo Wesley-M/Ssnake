@@ -11,6 +11,10 @@ html, body {
     background-color: rgb(236, 128, 26);
 }
 
+canvas {
+    background-color: white;
+}
+
 #game-container p {
     font-weight: bold;
     font-size: 35px;
