@@ -12,7 +12,9 @@ html, body {
 }
 
 canvas {
-    background-color: white;
+    background-image: url('../res/img/grid.png');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #game-container p {

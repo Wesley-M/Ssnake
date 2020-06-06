@@ -1,4 +1,5 @@
 import Snake from "../entities/Snake.js"
+import LightSource from "../utils/LightSource.js"
 
 export default class CanvasRenderer {
     constructor (w, h) {
@@ -44,21 +45,22 @@ export default class CanvasRenderer {
 
     renderLeaf(child, ctx) {
         if (child instanceof Snake) this.renderSnake(child, ctx);
+        else if (child instanceof LightSource) this.renderLight(child, ctx);
     }
 
     renderSnake(child, ctx) {
-        ctx.fillStyle = "green";
-        ctx.strokeStyle = "white";
-        
+        ctx.fillStyle = "#114411";
+        ctx.strokeStyle = "#444444";
+
+        ctx.globalCompositeOperation = 'destination-over';
+
         // Draw head
         ctx.beginPath();
-        ctx.arc(child.head.x, child.head.y, 6, 0, 2 * Math.PI);
+        ctx.arc(child.head.x, child.head.y, 10, 0, 2 * Math.PI);
         ctx.fill();
 
-        let tailRatio = 6;
+        let tailRatio = 10;
         let tailSegments = Math.round(child.body.length * (9/10));
-
-        console.log(tailSegments);
 
         let phase = 1;
 
@@ -70,12 +72,35 @@ export default class CanvasRenderer {
                 ctx.arc(segment.x, segment.y, tailRatio * phase, 0, 2 * Math.PI);
                 phase -= (1/tailSegments);
             } else {
-                ctx.arc(segment.x, segment.y, 6, 0, 2 * Math.PI);
+                ctx.arc(segment.x, segment.y, 10, 0, 2 * Math.PI);
             }
-
-            ctx.fill();
             ctx.stroke();
+            ctx.fill();
         });
+    }
+
+    renderLight(child, ctx) {
+        this.ligthenGradient(ctx, child.position.x, child.position.y, 800);
+    }
+
+    ligthenGradient(ctx, x, y, radius) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        var rnd = Math.abs(0.02 * Math.sin(Date.now() / 1000));
+
+        var radialGradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        
+        radialGradient.addColorStop(0, 'transparent');
+        radialGradient.addColorStop(0.02, `rgba(255, 183, 0, 0.1)`);
+        radialGradient.addColorStop(0.1 + rnd, `rgba(40, 40, 40, 0.7)`);
+        radialGradient.addColorStop(0.2 + rnd, `rgba(40, 40, 40, 1)`);
+        radialGradient.addColorStop(1, `rgba(40, 40, 40, 1)`);
+
+        ctx.fillStyle = radialGradient;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
     }
 
     renderText(child, ctx) {

@@ -1,6 +1,6 @@
 import SsnakeEngine from "../engine/index.js"
 
-const { CanvasRenderer, Container, Snake } = SsnakeEngine;
+const { CanvasRenderer, Container, Snake, LightSource } = SsnakeEngine;
 
 const STEP = 1 / 60;
 const MAX_FRAME = STEP * 5;
@@ -10,7 +10,9 @@ document.querySelector("#board").appendChild(renderer.view);
 
 const scene = new Container();
 const snake = new Snake();
+const light = new LightSource(snake, 20);
 
+scene.add(light);
 scene.add(snake);
 
 function run() {
