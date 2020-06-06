@@ -4,7 +4,7 @@
   "description": "",
   "main": "Game.js",
   "scripts": {
-    "start": "budo src/index.js:build.js --live"
+    "start": "budo src/main.js:build.js --live"
   },
   "repository": {
     "type": "git",

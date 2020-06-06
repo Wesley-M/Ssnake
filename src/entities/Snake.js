@@ -1,4 +1,6 @@
-import KeyControls from "../controls/KeyControls.js"
+import SsnakeEngine from "../../engine/index.js"
+
+const { KeyControls } = SsnakeEngine;
 
 export default class Snake {
     constructor() {
@@ -6,9 +8,10 @@ export default class Snake {
         this.body = [];
         this.speed = 1;
         this.velocity = {x: 0, y: 0};
-        this.distanceBetweenSegments = 5;
+        this.distanceBetweenSegments = 2;
         this.currentDirection;
-        this.minLength = 20;
+        this.minLength = 50;
+        this.segmentRatio = 8;
 
         this.__initBody();
         this.__initActions();
@@ -106,10 +109,6 @@ export default class Snake {
 
     desaccelerate() {
         this.velocity = {x: 0, y: 0};
-    }
-
-    get position() {
-        return this.head; 
     }
 
     update() {

@@ -710,5 +710,3 @@ function main() {
     let view = new View(grid);
     let snake = new Snake(grid, view);
 }
-
-main();

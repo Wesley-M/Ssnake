@@ -1,6 +1,3 @@
-import Snake from "../entities/Snake.js"
-import LightSource from "../utils/LightSource.js"
-
 export default class CanvasRenderer {
     constructor (w, h) {
         const canvas = document.createElement("canvas");
@@ -21,19 +18,14 @@ export default class CanvasRenderer {
             container.children.forEach((child) => {
                 // Choose to render or not the leaf node
                 if (child.visible == false) return;
-    
                 // Save the context to restore later
                 ctx.save();
-    
                 // Setting where to draw the leaf node
                 if (child.position) ctx.translate(Math.round(child.position.x), Math.round(child.position.y));
-                
                 // Rendering the leaf node
                 this.renderLeaf(child, ctx);
-    
                 // Handle the child nodes
                 if (child.children) this.renderRec(ctx, child);
-    
                 ctx.restore();
             });
         }
@@ -44,43 +36,51 @@ export default class CanvasRenderer {
     }
 
     renderLeaf(child, ctx) {
-        if (child instanceof Snake) this.renderSnake(child, ctx);
-        else if (child instanceof LightSource) this.renderLight(child, ctx);
+        if (child.constructor.name.includes("Snake")) this.renderSnake(child, ctx);
+        else if (child.constructor.name.includes("Map")) this.renderMap(child, ctx);
+        else if (child.constructor.name.includes("LightSource")) this.renderLight(child, ctx);
     }
 
     renderSnake(child, ctx) {
         ctx.fillStyle = "#114411";
-        ctx.strokeStyle = "#444444";
 
         ctx.globalCompositeOperation = 'destination-over';
 
         // Draw head
         ctx.beginPath();
-        ctx.arc(child.head.x, child.head.y, 10, 0, 2 * Math.PI);
+        ctx.arc(child.head.x, child.head.y, child.segmentRatio, 0, 2 * Math.PI);
         ctx.fill();
 
-        let tailRatio = 10;
+        let tailRatio = child.segmentRatio;
         let tailSegments = Math.round(child.body.length * (9/10));
 
-        let phase = 1;
+        let proportion = 1;
 
         // Draw body
         child.body.forEach((segment, index) => {
             ctx.beginPath();
             
             if (index >= child.body.length - tailSegments) {
-                ctx.arc(segment.x, segment.y, tailRatio * phase, 0, 2 * Math.PI);
-                phase -= (1/tailSegments);
+                ctx.arc(segment.x, segment.y, child.segmentRatio * proportion, 0, 2 * Math.PI);
+                proportion -= (1/tailSegments);
             } else {
-                ctx.arc(segment.x, segment.y, 10, 0, 2 * Math.PI);
+                ctx.arc(segment.x, segment.y, child.segmentRatio, 0, 2 * Math.PI);
             }
-            ctx.stroke();
             ctx.fill();
         });
     }
 
+    renderMap(child, ctx) {
+        ctx.globalCompositeOperation = 'destination-over';
+        
+        child.items.forEach(item => {
+            ctx.drawImage(item.texture.img, item.position.x, item.position.y, item.texture.img.width, item.texture.img.height);
+        });
+    }
+
     renderLight(child, ctx) {
-        this.ligthenGradient(ctx, child.position.x, child.position.y, 800);
+        let diagonal = Math.sqrt(Math.pow(this.w, 2) + Math.pow(this.h, 2));
+        this.ligthenGradient(ctx, child.position.x, child.position.y, diagonal);
     }
 
     ligthenGradient(ctx, x, y, radius) {
