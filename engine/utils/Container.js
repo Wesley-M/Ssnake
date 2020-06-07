@@ -1,4 +1,4 @@
-export default class Container {
+export class Container {
   constructor() {
     this.position = {x: 0, y: 0};
     this.children = []

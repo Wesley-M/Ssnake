@@ -1,6 +1,6 @@
-import ItemSelector from './items/selector/ItemSelector.js'
+import { ItemSelector } from './items/selector/ItemSelector.js'
 
-export default class Map {
+export class Map {
   constructor(w, h) {
     this.items = [];
     this.w = w;

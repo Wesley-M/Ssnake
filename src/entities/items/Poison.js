@@ -1,12 +1,10 @@
-import SsnakeEngine from '../../../engine/index.js'
-import {RARE_PROB_LEVEL_1} from '../../config/settings.js'
-
-const {Texture} = SsnakeEngine;
+import { Texture } from '../../../engine/index.js'
+import { RARE_PROB_LEVEL_1 } from '../../config/settings.js'
 
 /**
  * This item decreases the speed of the snake
  */
-export default class Poison {
+export class Poison {
   constructor(position, active = true, rarityClass = RARE_PROB_LEVEL_1) {
     this.rarityClass = rarityClass;
     this.active = active;

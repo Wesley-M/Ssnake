@@ -1,12 +1,10 @@
-import SsnakeEngine from '../../../engine/index.js'
-import {RARE_PROB_LEVEL_1} from '../../config/settings.js'
-
-const {Texture} = SsnakeEngine;
+import { Texture } from '../../../engine/index.js'
+import { RARE_PROB_LEVEL_1 } from '../../config/settings.js'
 
 /**
  * This item decreases the speed of the snake
  */
-export default class Mushroom {
+export class Mushroom {
   constructor(position, active = true, rarityClass = RARE_PROB_LEVEL_1) {
     this.rarityClass = rarityClass;
     this.active = active;
@@ -23,7 +21,9 @@ export default class Mushroom {
     const DEFAULT_VALUE = 4;
 
     if (value == undefined) value = DEFAULT_VALUE;
-
-    if (snake.velocity > snake.MIN_SPEED) snake.velocity -= value;
+    
+    if (snake.velocity > snake.MIN_SPEED)  { 
+      snake.velocity -= value;
+    }
   }
 }

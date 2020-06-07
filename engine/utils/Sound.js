@@ -1,4 +1,4 @@
-export default class Sound {
+export class Sound {
   constructor(filename, volume, loop = false) {
     this._audioElement = document.createElement('audio');
     this._configAudioElement(filename, volume, loop);
@@ -34,9 +34,10 @@ export default class Sound {
   }
 
   toggle() {
-    if (this.running)
+    if (this.running) {
       this.stop();
-    else
+    } else {
       this.play();
+    }
   }
 }

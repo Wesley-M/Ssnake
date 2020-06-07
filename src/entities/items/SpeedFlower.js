@@ -1,12 +1,10 @@
-import SsnakeEngine from '../../../../engine/index.js'
-import {RARE_PROB_LEVEL_2} from '../../config/settings.js'
-
-const {Texture} = SsnakeEngine;
+import { Texture } from '../../../engine/index.js'
+import { RARE_PROB_LEVEL_2 } from '../../config/settings.js'
 
 /**
  * This item increases the speed of the snake
  */
-export default class SpeedFlower {
+export class SpeedFlower {
   constructor(position, active = true, rarityClass = RARE_PROB_LEVEL_2) {
     this.rarityClass = rarityClass;
     this.active = active;
@@ -23,7 +21,8 @@ export default class SpeedFlower {
     const DEFAULT_VALUE = 4;
 
     if (value == undefined) value = DEFAULT_VALUE;
-
-    if (snake.velocity > snake.MIN_SPEED) snake.velocity += value;
+    if (snake.velocity > snake.MIN_SPEED) {
+      snake.velocity += value;
+    }
   }
 }

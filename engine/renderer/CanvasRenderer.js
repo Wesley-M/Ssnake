@@ -1,12 +1,9 @@
-export default class CanvasRenderer {
+export class CanvasRenderer {
   constructor(w, h) {
     const canvas = document.createElement('canvas');
-
     this.w = canvas.width = w;
     this.h = canvas.height = h;
-
     this.view = canvas;
-
     this.ctx = canvas.getContext('2d');
     this.ctx.textBaseline = 'top';
   }
@@ -27,29 +24,29 @@ export default class CanvasRenderer {
             if (child.position)
               ctx.translate(
                   Math.round(child.position.x), Math.round(child.position.y));
-            
+
             // Rendering the leaf node
             this.renderLeaf(child, ctx);
-            
+
             // Handle the child nodes
-            if (child.children) 
-              this.renderRec(ctx, child);
+            if (child.children) this.renderRec(ctx, child);
             ctx.restore();
           });
         }
 
-    ctx.clearRect(0, 0, this.w, this.h);
+        ctx.clearRect(0, 0, this.w, this.h);
 
     renderRec(ctx, container);
   }
 
   renderLeaf(child, ctx) {
-    if (child.constructor.name.includes('Snake'))
+    if (child.constructor.name.includes('Snake')) {
       this.renderSnake(child, ctx);
-    else if (child.constructor.name.includes('Map'))
+    } else if (child.constructor.name.includes('Map')) {
       this.renderMap(child, ctx);
-    else if (child.constructor.name.includes('LightSource'))
+    } else if (child.constructor.name.includes('LightSource')) {
       this.renderLight(child, ctx);
+    }
   }
 
   renderSnake(child, ctx) {

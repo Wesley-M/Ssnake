@@ -1,7 +1,7 @@
-import {POSSIBLE_PROBS} from '../../../config/settings.js'
-import {ITEMS_MAP} from '../config/settings.js'
+import { POSSIBLE_PROBS } from '../../../config/settings.js'
+import { ITEMS_MAP } from '../config/settings.js'
 
-export default class ItemSelector {
+export class ItemSelector {
   /**
    * This function returns a new item based on the name passed, if the name
    * is not found to be a valid item name, then the item will be choosed
@@ -14,6 +14,7 @@ export default class ItemSelector {
       return new ITEMS_MAP[itemName]();
     } else {
       let itemName = this.chooseRandomItemName();
+      console.log(itemName);
       return new ITEMS_MAP[itemName]();
     }
   }

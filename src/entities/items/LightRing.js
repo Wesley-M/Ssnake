@@ -1,12 +1,10 @@
-import SsnakeEngine from '../../../engine/index.js'
-import {RARE_PROB_LEVEL_1} from '../../config/settings.js'
-
-const {Texture} = SsnakeEngine;
+import { Texture } from '../../../engine/index.js'
+import { RARE_PROB_LEVEL_1 } from '../../config/settings.js'
 
 /**
  * This item increases the light source ratio
  */
-export default class LightRing {
+export class LightRing {
   constructor(position, active = true, rarityClass = RARE_PROB_LEVEL_1) {
     this.rarityClass = rarityClass;
     this.active = active;

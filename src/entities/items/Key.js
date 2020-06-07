@@ -1,13 +1,10 @@
-import SsnakeEngine from '../../../engine/index.js'
-import {RARE_PROB_LEVEL_3} from '../../config/settings.js'
-
-const {Texture} = SsnakeEngine;
+import { Texture } from '../../../engine/index.js'
 
 /**
  * This item represents a key that will be given to the snake
  */
-export default class Key {
-  constructor(position, active = true, rarityClass = RARE_PROB_LEVEL_3) {
+export class Key {
+  constructor(position, active = true, rarityClass = undefined) {
     this.rarityClass = rarityClass;
     this.active = active;
     this.position = position;

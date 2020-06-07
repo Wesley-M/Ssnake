@@ -1,4 +1,4 @@
-export default class KeyControls {
+export class KeyControls {
   constructor() {
     this.actions = [];
     this.keyPressed = false;
@@ -50,10 +50,11 @@ export default class KeyControls {
 
       if (action.length != 0) {
         e.preventDefault();
-        if (action[0].triggerOnce)
+        if (action[0].triggerOnce) {
           this.keyPressed = false;
-        else
+        } else {
           action[0].run();
+        }
       }
     }, false);
   }

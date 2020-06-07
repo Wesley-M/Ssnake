@@ -1,4 +1,4 @@
-export default class LightSource {
+export class LightSource {
   constructor(obj, ratio) {
     this.obj = obj;
     this.position = {x: this.obj.position.x, y: this.obj.position.y};

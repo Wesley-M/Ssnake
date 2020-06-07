@@ -1,8 +1,6 @@
-import SsnakeEngine from '../engine/index.js'
-import Map from './entities/Map.js'
-import Snake from './entities/Snake.js'
-
-const {CanvasRenderer, Container, LightSource} = SsnakeEngine;
+import { CanvasRenderer, Container, LightSource } from '../engine/index.js'
+import { Map } from './entities/Map.js'
+import { Snake } from './entities/Snake.js'
 
 const CLIENT_WIDTH = window.innerWidth ||
     document.documentElement.clientWidth || 

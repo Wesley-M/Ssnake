@@ -1,12 +1,10 @@
-import SsnakeEngine from '../../../engine/index.js'
-import {NORMAL_PROB} from '../../config/settings.js'
-
-const {Texture} = SsnakeEngine;
+import { Texture } from '../../../engine/index.js'
+import { NORMAL_PROB } from '../../config/settings.js'
 
 /**
  * This item feeds the snake
  */
-export default class Food {
+export class Food {
   constructor(position, active = true, rarityClass = NORMAL_PROB) {
     this.rarityClass = rarityClass;
     this.active = active;

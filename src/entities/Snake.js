@@ -1,8 +1,6 @@
-import SsnakeEngine from '../../engine/index.js'
+import { KeyControls } from '../../engine/index.js'
 
-const {KeyControls} = SsnakeEngine;
-
-export default class Snake {
+export class Snake {
   constructor() {
     this.head = {x: 10, y: 10};
     this.body = [];
@@ -71,7 +69,6 @@ export default class Snake {
 
   moveSegments() {
     const FIRST_SEGMENT = 0;
-    let currentDistanceBetweenSegs = 0;
 
     //  Move the head of the snake
     this.head.x += this.velocity.x;
