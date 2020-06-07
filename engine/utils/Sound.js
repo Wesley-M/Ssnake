@@ -1,7 +1,6 @@
 export default class Sound {
-
-  constructor(filename, volume, loop=false) {
-    this._audioElement = document.createElement("audio");
+  constructor(filename, volume, loop = false) {
+    this._audioElement = document.createElement('audio');
     this._configAudioElement(filename, volume, loop);
     this.running = false;
   }
@@ -9,9 +8,9 @@ export default class Sound {
   _configAudioElement(filename, volume, loop) {
     this._audioElement.src = filename;
     this._audioElement.volume = volume;
-    this._audioElement.setAttribute("preload", "auto");
-    this._audioElement.setAttribute("controls", "none");
-    this._audioElement.style.display = "none";
+    this._audioElement.setAttribute('preload', 'auto');
+    this._audioElement.setAttribute('controls', 'none');
+    this._audioElement.style.display = 'none';
     this._audioElement.loop = loop;
     document.body.appendChild(this._audioElement);
   }
@@ -35,8 +34,9 @@ export default class Sound {
   }
 
   toggle() {
-    if (this.running) this.stop();
-    else this.play();
+    if (this.running)
+      this.stop();
+    else
+      this.play();
   }
-  
 }
