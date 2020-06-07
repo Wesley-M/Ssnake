@@ -4,7 +4,8 @@
   "description": "",
   "main": "Game.js",
   "scripts": {
-    "start": "budo src/main.js:build.js --live"
+    "start": "budo src/main.js:build.js --live",
+    "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,8 @@
   "homepage": "https://github.com/Wesley-M/Ssnake#readme",
   "dependencies": {
     "budo": "^11.6.3"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.4"
   }
 }

@@ -14,7 +14,6 @@ export class ItemSelector {
       return new ITEMS_MAP[itemName]();
     } else {
       let itemName = this.chooseRandomItemName();
-      console.log(itemName);
       return new ITEMS_MAP[itemName]();
     }
   }
