@@ -1,21 +1,22 @@
-import { KeyControls } from '../../engine/index.js'
-
 export class Snake {
-  constructor() {
-    this.head = {x: 10, y: 10};
+  constructor(x = 10, y = 10) {
+    this.head = {x, y};
     this.body = [];
-    this.speed = 1;
-    this.velocity = {x: 0, y: 0};
-    this.distanceBetweenSegments = 2;
-    this.currentDirection;
-    this.minLength = 50;
     this.segmentRatio = 8;
+    this.minLength = 50;
+    this.speed = 1.5;
+    this.velocity = {x: 0, y: 0};
+    this.currentDirection;
+    this.distanceBetweenSegments = 2;
+    this.position = this.head;
+    this.turning = false;
+    this.turningIterations = 15;
+    this.decreaseSpeedOnTurningBy = 0.4;
 
-    this.__initBody();
-    this.__initActions();
+    this.initBody();
   }
 
-  __initBody() {
+  initBody() {
     let segment = 1;
     for (let i = 0; i < this.minLength; i++) {
       this.body.push({
@@ -26,45 +27,61 @@ export class Snake {
     }
   }
 
-  __initActions() {
-    const controls = new KeyControls();
-
-    controls.addKeyAction('keydown', 37, () => {this.move('left')}, false);
-    controls.addKeyAction('keydown', 39, () => {this.move('right')}, false);
-    controls.addKeyAction('keydown', 38, () => {this.move('up')}, false);
-    controls.addKeyAction('keydown', 40, () => {this.move('down')}, false);
-
-    controls.addKeyAction('keyup', 37, () => {this.desaccelerate()}, false);
-    controls.addKeyAction('keyup', 39, () => {this.desaccelerate()}, false);
-    controls.addKeyAction('keyup', 38, () => {this.desaccelerate()}, false);
-    controls.addKeyAction('keyup', 40, () => {this.desaccelerate()}, false);
-
-    controls.init();
-  }
-
   move(direction) {
-    this.changeVelocity(direction);
-
+    const oldDirection = this.currentDirection;
     this.currentDirection = direction;
 
+    const newSpeed = this.getNewSpeed(oldDirection);
+    this.changeVelocity(direction, newSpeed);
     this.moveSegments();
   }
 
-  changeVelocity(direction) {
+  getNewSpeed(oldDirection) {
+    const changedDirection = this.currentDirection != null &&
+        (oldDirection != this.currentDirection);
+
+    let newSpeed = 0;
+
+    // When the direction changes, then for a number of iterations the 
+    // speed will decrease.
+    if (changedDirection) {
+      this.turning = true;
+      newSpeed = this.speed * (1 - this.decreaseSpeedOnTurningBy);
+    } else {
+      if (this.turningIterations > 0 && this.turning) {
+        this.turningIterations -= 1;
+        newSpeed = this.speed * (1 - this.decreaseSpeedOnTurningBy);
+      } else if (this.turningIterations <= 0) {
+        this.turning = false;
+        this.turningIterations = 15;
+        newSpeed = this.speed;
+      } else {
+        newSpeed = this.speed;
+      }
+    }
+
+    return newSpeed;
+  }
+
+  changeVelocity(direction, speed = this.speed) {
     switch (direction) {
       case 'up':
-        this.velocity.y = -this.speed;
+        this.velocity.y = -speed;
         break;
       case 'down':
-        this.velocity.y = this.speed;
+        this.velocity.y = speed;
         break;
       case 'left':
-        this.velocity.x = -this.speed;
+        this.velocity.x = -speed;
         break;
       case 'right':
-        this.velocity.x = this.speed;
+        this.velocity.x = speed;
         break;
     }
+  }
+
+  desaccelerate() {
+    this.velocity = {x: 0, y: 0};
   }
 
   moveSegments() {
@@ -85,12 +102,7 @@ export class Snake {
       }
     });
   }
-
-  getDistanceBetweenSegments(seg1, seg2) {
-    return Math.sqrt(
-        Math.pow((seg1.x - seg2.x), 2) + Math.pow((seg1.y - seg2.y), 2));
-  }
-
+  
   moveSegmentTowards(seg1, seg2) {
     let currentDistanceBetweenSegs =
         this.getDistanceBetweenSegments(seg1, seg2);
@@ -103,12 +115,9 @@ export class Snake {
     }
   }
 
-  get position() {
-    return this.head;
-  }
-
-  desaccelerate() {
-    this.velocity = {x: 0, y: 0};
+  getDistanceBetweenSegments(seg1, seg2) {
+    return Math.sqrt(
+        Math.pow((seg1.x - seg2.x), 2) + Math.pow((seg1.y - seg2.y), 2));
   }
 
   update() {

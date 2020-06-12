@@ -5,24 +5,24 @@ export class Map {
     this.items = [];
     this.w = w;
     this.h = h;
-    this.min_items = 5;
+    this.minItems = 5;
 
-    this.items_dim = {w: 24, h: 24};
+    this.itemsDim = {w: 24, h: 24};
   }
 
   placeItems(qty, random = true, coordinates = undefined) {
     if (random) {
       for (let i = 0; i < qty; i++) {
         let randomPosition = {
-          x: Math.random() * (this.w - this.items_dim.w),
-          y: Math.random() * (this.h - this.items_dim.h)
+          x: Math.random() * (this.w - this.itemsDim.w),
+          y: Math.random() * (this.h - this.itemsDim.h)
         };
 
         let item = new ItemSelector().getItem();
 
         item.position = randomPosition;
-        item.texture.img.width = this.items_dim.w;
-        item.texture.img.height = this.items_dim.h;
+        item.texture.img.width = this.itemsDim.w;
+        item.texture.img.height = this.itemsDim.h;
 
         this.items.push(item);
       }
@@ -30,8 +30,8 @@ export class Map {
   }
 
   update() {
-    if (this.items.length < this.min_items) {
-      this.placeItems(this.min_items - this.items.length);
+    if (this.items.length < this.minItems) {
+      this.placeItems(this.minItems - this.items.length);
     }
   }
 }

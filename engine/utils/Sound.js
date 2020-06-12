@@ -1,38 +1,70 @@
+/**
+ * Represents a audio element
+ * @export
+ * @class Sound
+ */
 export class Sound {
+  /**
+   * Creates an instance of Sound.
+   * @param {string} filename The filename of the sound
+   * @param {number} volume The volume of the sound
+   * @param {boolean} [loop=false] Flag to specify if the audio is in loop
+   * @memberof Sound
+   */
   constructor(filename, volume, loop = false) {
-    this._audioElement = document.createElement('audio');
-    this._configAudioElement(filename, volume, loop);
+    this.audioElement = document.createElement('audio');
+    this.init(filename, volume, loop);
     this.running = false;
   }
 
-  _configAudioElement(filename, volume, loop) {
-    this._audioElement.src = filename;
-    this._audioElement.volume = volume;
-    this._audioElement.setAttribute('preload', 'auto');
-    this._audioElement.setAttribute('controls', 'none');
-    this._audioElement.style.display = 'none';
-    this._audioElement.loop = loop;
-    document.body.appendChild(this._audioElement);
+  /**
+   * The init function from the constructor
+   * @param {string} filename The filename of the sound
+   * @param {number} volume The volume of the sound
+   * @param {boolean} [loop=false] Flag to specify if the audio is in loop
+   * @memberof Sound
+   */
+  init(filename, volume, loop) {
+    this.audioElement.src = filename;
+    this.audioElement.volume = volume;
+    this.audioElement.setAttribute('preload', 'auto');
+    this.audioElement.setAttribute('controls', 'none');
+    this.audioElement.style.display = 'none';
+    this.audioElement.loop = loop;
+    document.body.appendChild(this.audioElement);
   }
 
+  /**
+   * Start the audio, preempting an old execution if needed.
+   * @memberof Sound
+   */
   play() {
-    this._audioElement.play();
     this.running = true;
+    this.stop();
+    this.resetTime();
+    this.audioElement.play();
   }
 
+  /**
+   * Stop the audio
+   * @memberof Sound
+   */
   stop() {
-    this._audioElement.pause();
     this.running = false;
+    this.audioElement.pause();
   }
 
+  /**
+   * Reset the audio time
+  */
   resetTime() {
-    this._audioElement.currentTime = 0;
+    this.audioElement.currentTime = 0;
   }
-
-  loop(type) {
-    this._audioElement.loop = type;
-  }
-
+  
+  /**
+   * Toggle audio state. If the audio is playing, then it stops. If it's not,
+   * then it starts.
+  */
   toggle() {
     if (this.running) {
       this.stop();
