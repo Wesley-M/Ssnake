@@ -81,7 +81,7 @@ const renderer = new CanvasRenderer(GAME_WIDTH, GAME_HEIGHT);
 const scene = new Container();
 const map = new Map(GAME_WIDTH, GAME_HEIGHT);
 const snake = new Snake();
-const light = new LightSource(snake, /* ratio= */ 10);
+const light = new LightSource(snake, /* ratio= */ 50);
 
 scene.add(light);
 scene.add(map);

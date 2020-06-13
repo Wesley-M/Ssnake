@@ -17,12 +17,7 @@ export class SpeedFlower {
    * @param  {Snake}  snake The snake in which the effect takes place
    * @param  {Number} value The speed value to be added
    */
-  applyEffect(snake, value = undefined) {
-    const DEFAULT_VALUE = 4;
-
-    if (value == undefined) value = DEFAULT_VALUE;
-    if (snake.velocity > snake.MIN_SPEED) {
-      snake.velocity += value;
-    }
+  applyEffect(snake, value = 1) {
+    snake.velocity += value;
   }
 }

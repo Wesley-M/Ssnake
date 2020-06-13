@@ -17,11 +17,7 @@ export class Food {
    * @param  {Snake}  snake The snake in which the effect takes place
    * @param  {Number} value The number of segments to be added to the snake tail
    */
-  applyEffect(snake, value) {
-    const DEFAULT_VALUE = 3;
-
-    if (value == undefined) value = DEFAULT_VALUE;
-
+  applyEffect(snake, value = 10) {
     snake.eat(value);
   }
 }

@@ -20,12 +20,9 @@ export class DarkRing {
    * @param  {Number}       value The number to be subtracted to the visible
    *     ratio
    */
-  applyEffect(lightSource, value = undefined) {
-    const DEFAULT_VALUE = 50;
-
+  applyEffect(lightSource, value = 10) {
     if (this.active) {
-      if (value == undefined) value = DEFAULT_VALUE;
-      lightSource.ratio -= value;
+      lightSource = Math.max(lightSource.minRatio, lightSource.ratio - value);
     }
   }
 }

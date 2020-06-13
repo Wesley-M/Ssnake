@@ -2,16 +2,19 @@ export class Snake {
   constructor(x = 10, y = 10) {
     this.head = {x, y};
     this.body = [];
+    this.position = this.head;
     this.segmentRatio = 8;
     this.minLength = 50;
     this.speed = 1.5;
+    this.minSpeed = 1;
     this.velocity = {x: 0, y: 0};
     this.currentDirection;
     this.distanceBetweenSegments = 2;
-    this.position = this.head;
     this.turning = false;
     this.turningIterations = 15;
     this.decreaseSpeedOnTurningBy = 0.4;
+    this.keys = 0;
+    this.dead = false;
 
     this.initBody();
   }
@@ -24,6 +27,10 @@ export class Snake {
         y: this.head.y + segment * this.distanceBetweenSegments
       });
       segment += 1;
+    }
+
+    for(let j = 0; j < 20; j++) {
+      this.eat(5);
     }
   }
 
@@ -104,12 +111,12 @@ export class Snake {
   }
   
   moveSegmentTowards(seg1, seg2) {
-    let currentDistanceBetweenSegs =
+    const currentDistanceBetweenSegs =
         this.getDistanceBetweenSegments(seg1, seg2);
     if (currentDistanceBetweenSegs > this.distanceBetweenSegments) {
-      let angle = Math.atan2(seg2.y - seg1.y, seg2.x - seg1.x);
-      let relativeSpeed =
-          Math.abs(currentDistanceBetweenSegs - this.distanceBetweenSegments)
+      const angle = Math.atan2(seg2.y - seg1.y, seg2.x - seg1.x);
+      const relativeSpeed =
+          Math.abs(currentDistanceBetweenSegs - this.distanceBetweenSegments);
       seg1.x += Math.cos(angle) * relativeSpeed;
       seg1.y += Math.sin(angle) * relativeSpeed;
     }
@@ -118,6 +125,22 @@ export class Snake {
   getDistanceBetweenSegments(seg1, seg2) {
     return Math.sqrt(
         Math.pow((seg1.x - seg2.x), 2) + Math.pow((seg1.y - seg2.y), 2));
+  }
+
+  takeKey() {
+    this.keys += 1;
+  }
+
+  eat(value) {
+    const tail = {...this.body[this.body.length - 1]};
+    for (let i = 0; i < value; i++) {
+      const newSegment = {x: tail.x, y: tail.y + i * this.distanceBetweenSegments};
+      this.body.push(newSegment);
+    }
+  }
+
+  die() {
+    this.dead = true;
   }
 
   update() {

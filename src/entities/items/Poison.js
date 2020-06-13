@@ -18,11 +18,7 @@ export class Poison {
    * @param  {Number} value The number of segments to be subtracted from the
    *     tail
    */
-  applyEffect(snake, value = undefined) {
-    const DEFAULT_VALUE = 3;
-
-    if (value == undefined) value = DEFAULT_VALUE;
-
+  applyEffect(snake, value = 3) {
     snake.reduce(value);
   }
 }

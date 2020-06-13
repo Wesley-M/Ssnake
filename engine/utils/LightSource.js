@@ -13,6 +13,7 @@ export class LightSource {
     this.obj = obj;
     this.position = {x: this.obj.position.x, y: this.obj.position.y};
     this.ratio = ratio;
+    this.minRatio = 10;
   }
 
   /**
