@@ -1,15 +1,20 @@
-import { Texture } from '../../../engine/index.js'
-import { RARE_PROB_LEVEL_1 } from '../../config/settings.js'
+import {Texture} from '../../../engine/index.js'
+import {RARE_PROB_LEVEL_1} from '../../config/settings.js'
 
 /**
  * This item decreases the speed of the snake
  */
 export class Poison {
-  constructor(position, active = true, rarityClass = RARE_PROB_LEVEL_1) {
+  constructor(
+      position, width = 24, height = 24, active = true,
+      rarityClass = RARE_PROB_LEVEL_1) {
     this.rarityClass = rarityClass;
     this.active = active;
     this.position = position;
-    this.texture = new Texture('../../../res/img/green_flask.png');
+    this.width = width;
+    this.height = height;
+    this.target = 'snake';
+    this.texture = new Texture('../../../res/img/green_flask.png', width, height);
   }
 
   /**
@@ -18,7 +23,7 @@ export class Poison {
    * @param  {Number} value The number of segments to be subtracted from the
    *     tail
    */
-  applyEffect(snake, value = 3) {
-    snake.reduce(value);
+  applyEffect(snake, value = 30) {
+    snake.starve(value);
   }
 }

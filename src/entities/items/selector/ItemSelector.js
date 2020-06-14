@@ -29,6 +29,8 @@ export class ItemSelector {
     // Here we select one of the items that share the same rarity class
     let randomIndex = Math.floor(itemsToChooseFrom.length * Math.random());
 
+    console.log(itemsToChooseFrom[randomIndex]);
+
     return itemsToChooseFrom[randomIndex];
   }
 

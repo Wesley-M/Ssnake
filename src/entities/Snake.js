@@ -3,11 +3,11 @@ export class Snake {
     this.head = {x, y};
     this.body = [];
     this.position = this.head;
-    this.segmentRatio = 8;
-    this.minLength = 50;
-    this.speed = 1.5;
-    this.minSpeed = 1;
+    this.speed = 3;
     this.velocity = {x: 0, y: 0};
+    this.segmentRatio = 8;
+    this.minLength = 40;
+    this.minSpeed = 1;
     this.currentDirection;
     this.distanceBetweenSegments = 2;
     this.turning = false;
@@ -28,10 +28,6 @@ export class Snake {
       });
       segment += 1;
     }
-
-    for(let j = 0; j < 20; j++) {
-      this.eat(5);
-    }
   }
 
   move(direction) {
@@ -49,7 +45,7 @@ export class Snake {
 
     let newSpeed = 0;
 
-    // When the direction changes, then for a number of iterations the 
+    // When the direction changes, then for a number of iterations the
     // speed will decrease.
     if (changedDirection) {
       this.turning = true;
@@ -109,7 +105,7 @@ export class Snake {
       }
     });
   }
-  
+
   moveSegmentTowards(seg1, seg2) {
     const currentDistanceBetweenSegs =
         this.getDistanceBetweenSegments(seg1, seg2);
@@ -134,13 +130,30 @@ export class Snake {
   eat(value) {
     const tail = {...this.body[this.body.length - 1]};
     for (let i = 0; i < value; i++) {
-      const newSegment = {x: tail.x, y: tail.y + i * this.distanceBetweenSegments};
+      const newSegment = {
+        x: tail.x,
+        y: tail.y + i * this.distanceBetweenSegments
+      };
       this.body.push(newSegment);
+    }
+  }
+
+  starve(value) {
+    for (let i = 0; i < value; i++) {
+      this.body.pop();
     }
   }
 
   die() {
     this.dead = true;
+  }
+
+  decreaseSpeed(value) {
+    this.speed = Math.max(snake.minSpeed, snake.speed - value);
+  }
+
+  increaseSpeed(value) {
+    this.speed += value;
   }
 
   update() {

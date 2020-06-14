@@ -31,13 +31,6 @@ export class CanvasRenderer {
 
             ctx.save();  // Saving the context
 
-            // If position was set, then translate the canvas to that position
-            if (child.position) {
-              let childX = Math.round(child.position.x);
-              let childY = Math.round(child.position.y)
-              ctx.translate(childX, childY);
-            }
-
             this.renderLeaf(child, ctx);
 
             // Handle the children nodes
@@ -152,7 +145,7 @@ export class CanvasRenderer {
     const lightRatio = child.ratio / 100;
 
     // Variation in light source ratio
-    const variation = Math.abs(0.02 * Math.sin(Date.now() / 1000));
+    const variation = Math.abs(0.05 * Math.sin(Date.now() / 1000));
 
     // Light source position
     const x = child.position.x;

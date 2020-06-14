@@ -1,15 +1,20 @@
-import { Texture } from '../../../engine/index.js'
-import { NORMAL_PROB } from '../../config/settings.js'
+import {Texture} from '../../../engine/index.js'
+import {NORMAL_PROB} from '../../config/settings.js'
 
 /**
  * This item feeds the snake
  */
 export class Food {
-  constructor(position, active = true, rarityClass = NORMAL_PROB) {
+  constructor(
+      position, width = 24, height = 24, active = true,
+      rarityClass = NORMAL_PROB) {
     this.rarityClass = rarityClass;
     this.active = active;
     this.position = position;
-    this.texture = new Texture('../../../res/img/meat.png');
+    this.width = width;
+    this.height = height;
+    this.target = 'snake';
+    this.texture = new Texture('../../../res/img/meat.png', width, height);
   }
 
   /**
@@ -17,7 +22,7 @@ export class Food {
    * @param  {Snake}  snake The snake in which the effect takes place
    * @param  {Number} value The number of segments to be added to the snake tail
    */
-  applyEffect(snake, value = 10) {
+  applyEffect(snake, value = 2) {
     snake.eat(value);
   }
 }

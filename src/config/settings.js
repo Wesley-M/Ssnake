@@ -8,3 +8,17 @@ export const POSSIBLE_PROBS = [
   RARE_PROB_LEVEL_1,    
   RARE_PROB_LEVEL_2,   
 ];
+
+const CLIENT_WIDTH = window.innerWidth ||
+                     document.documentElement.clientWidth || 
+                     document.body.clientWidth;
+
+const CLIENT_HEIGHT = window.innerHeight ||
+                      document.documentElement.clientHeight || 
+                      document.body.clientHeight;
+
+export const GAME_WIDTH = CLIENT_WIDTH * 0.7;
+export const GAME_HEIGHT = CLIENT_HEIGHT * 0.8;
+
+const FRAME_STEP = 1 / 60;
+export const MAX_FRAMES = FRAME_STEP * 5;
