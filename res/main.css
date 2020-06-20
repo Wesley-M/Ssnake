@@ -16,10 +16,8 @@ html, body {
 }
 
 canvas {
-    background-image: url('../res/img/grid.png');
-    background-repeat: no-repeat;
-    background-size: cover;
     border-radius: 5px;
+    background: black;
 }
 
 #game-container p {

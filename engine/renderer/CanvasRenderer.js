@@ -40,8 +40,9 @@ export class CanvasRenderer {
           });
         }
 
-    ctx.clearRect(0, 0, this.w, this.h); // Cleaning the canvas
-    renderRec(ctx, container); // Recursion call
+                            ctx.clearRect(
+                                0, 0, this.w, this.h);  // Cleaning the canvas
+    renderRec(ctx, container);                          // Recursion call
   }
 
   /**
@@ -82,17 +83,31 @@ export class CanvasRenderer {
       return (index < child.body.length - tailSegments);
     }
 
-    // Defining the snake color.
-    const SNAKE_COLOR = '#114411';
+    function updateCameraPosition() {
+      const cameraTargetX = child.position.x - ctx.canvas.clientWidth / 2;
+      child.camera.x += ((cameraTargetX - child.camera.x) / 10 >> 0);
 
+      const cameraTargetY = child.position.y - ctx.canvas.clientHeight / 2;
+      child.camera.y += ((cameraTargetY - child.camera.y) / 10 >> 0);
+    }
+
+    // Defining the snake color.
+    const SNAKE_COLOR = 'darkgreen';
+    
     // Render the snake below the light source.
-    ctx.globalCompositeOperation = 'destination-over';
+    ctx.globalCompositeOperation = 'source-over';
 
     // Using the snake color
     ctx.fillStyle = SNAKE_COLOR;
 
+    // Updating the camera position before drawing
+    updateCameraPosition();
+
     // Drawing the snake head
-    drawSegment(child.head.x, child.head.y, child.segmentRatio);
+    drawSegment(
+        child.head.x - child.camera.x - child.segmentRatio / 2,
+        child.head.y - child.camera.y - child.segmentRatio / 2,
+        child.segmentRatio);
 
     // Tail params
     let tailRatio = 9 / 10;
@@ -104,7 +119,10 @@ export class CanvasRenderer {
 
     // Draw body
     child.body.forEach((segment, index) => {
-      drawSegment(segment.x, segment.y, child.segmentRatio * segProportion);
+      drawSegment(
+          segment.x - child.camera.x - child.segmentRatio / 2,
+          segment.y - child.camera.y - child.segmentRatio / 2,
+          child.segmentRatio * segProportion);
       if (!inBody(index, tailSegments)) segProportion -= decreaseProportion;
     });
   }
@@ -116,14 +134,54 @@ export class CanvasRenderer {
    */
   renderMap(child, ctx) {
     // The map is drawn behind the light source.
-    ctx.globalCompositeOperation = 'destination-over';
+    ctx.globalCompositeOperation = 'source-over';
 
-    // Render the items on the screen
-    child.items.forEach(item => {
-      ctx.drawImage(
-          item.texture.img, item.position.x, item.position.y,
-          item.texture.img.width, item.texture.img.height);
+    // Getting a map from names to ids
+    const layerId = {};
+    child.tilemap.layers.forEach((layer, index) => {
+      layerId[layer.name] = index;
     });
+
+    const tileWidth = child.tilemap.tilesets[layerId['background']].tilewidth;
+    const rowLength =
+        child.tilemap.tilesets[layerId['background']].imagewidth / tileWidth;
+
+    const cameraTileY = child.camera.y / (tileWidth) >> 0;
+    const cameraTileX = child.camera.x / (tileWidth) >> 0;
+    const tileXCount = ctx.canvas.clientWidth / tileWidth >> 0;
+    const tileYCount = ctx.canvas.clientHeight / tileWidth >> 0;
+
+    if (child.tilemap.layers) {
+      for (let layer = 0; layer < 2; layer++) {
+        for (let i = cameraTileY - 1; i < cameraTileY + tileYCount + 2; i++) {
+          for (let j = cameraTileX - 1; j < cameraTileX + tileXCount + 2; j++) {
+            let data = 0;
+
+            if (i >= 0 && j >= 0 && i < child.tilemap.layers[layer].height &&
+                j < child.tilemap.layers[layer].width) {
+
+              data = child.tilemap.layers[layer]
+                         .data[i * child.tilemap.layers[layer].width + j];
+
+              const tileFrameX = (data % rowLength) - 1;
+              const tileFrameY = (data / rowLength) >> 0;
+
+              let sprite = child.tilesheet;
+
+              if (tileFrameX >= 0 && tileFrameY >= 0) {
+                ctx.drawImage(
+                    sprite, tileWidth * tileFrameX, 
+                    tileWidth * tileFrameY,
+                    tileWidth, tileWidth, 
+                    (j * (tileWidth) - child.camera.x) >> 0,
+                    (i * (tileWidth) - child.camera.y) >> 0, 
+                    tileWidth, tileWidth);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -135,7 +193,7 @@ export class CanvasRenderer {
     ctx.save();  // Saving the context
 
     // Where both shapes overlap the color is determined by adding color values
-    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalCompositeOperation = 'source-over';
 
     // The vision field ratio is equal to the canvas diagonal
     const visionFieldRatio =
@@ -145,7 +203,7 @@ export class CanvasRenderer {
     const lightRatio = child.ratio / 100;
 
     // Variation in light source ratio
-    const variation = Math.abs(0.05 * Math.sin(Date.now() / 1000));
+    const variation = Math.abs(0.015 * Math.sin(Date.now() / 1000));
 
     // Light source position
     const x = child.position.x;
@@ -159,10 +217,10 @@ export class CanvasRenderer {
     radialGradient.addColorStop(0, 'rgba(255, 183, 0, 0.09)');
     radialGradient.addColorStop(lightRatio / 10, `rgba(255, 183, 0, 0.1)`);
     radialGradient.addColorStop(
-        (lightRatio / 2) + variation, `rgba(40, 40, 40, 0.7)`);
+        (lightRatio / 2) + variation, `rgba(0, 0, 0, 0.7)`);
     radialGradient.addColorStop(
-        Math.min(lightRatio + variation, 1), `rgba(40, 40, 40, 1)`);
-    radialGradient.addColorStop(1, `rgba(40, 40, 40, 1)`);
+        Math.min(lightRatio + variation, 1), `rgba(0, 0, 0, 1)`);
+    radialGradient.addColorStop(1, `rgba(0, 0, 0, 1)`);
 
     // Drawing the circle of light
     ctx.fillStyle = radialGradient;

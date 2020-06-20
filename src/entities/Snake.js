@@ -1,20 +1,22 @@
 export class Snake {
-  constructor(x = 10, y = 10) {
+  constructor(camera, x = 10, y = 10, collisionsService) {
     this.head = {x, y};
     this.body = [];
     this.position = this.head;
-    this.speed = 3;
-    this.velocity = {x: 0, y: 0};
-    this.segmentRatio = 8;
-    this.minLength = 40;
+    this.speed = 1;
+    this.velocity = {dx: 0, dy: 0};
+    this.segmentRatio = 4;
+    this.minLength = 20;
     this.minSpeed = 1;
     this.currentDirection;
     this.distanceBetweenSegments = 2;
     this.turning = false;
-    this.turningIterations = 15;
-    this.decreaseSpeedOnTurningBy = 0.4;
+    this.turningIterations = 20;
+    this.decreaseSpeedOnTurningBy = 0.3;
     this.keys = 0;
     this.dead = false;
+    this.collisionsService = collisionsService;
+    this.camera = camera;
 
     this.initBody();
   }
@@ -30,12 +32,21 @@ export class Snake {
     }
   }
 
+  hasWallCollisions() {
+    return this.collisionsService.checkWallCollisions(
+        {x: this.position.x, y: this.position.y});
+  }
+
   move(direction) {
+    const oppositeDirections =
+        {'up': 'down', 'left': 'right', 'right': 'left', 'down': 'up'};
+
     const oldDirection = this.currentDirection;
     this.currentDirection = direction;
 
     const newSpeed = this.getNewSpeed(oldDirection);
     this.changeVelocity(direction, newSpeed);
+    
     this.moveSegments();
   }
 
@@ -69,31 +80,37 @@ export class Snake {
   changeVelocity(direction, speed = this.speed) {
     switch (direction) {
       case 'up':
-        this.velocity.y = -speed;
+        this.velocity.dy = -speed;
         break;
       case 'down':
-        this.velocity.y = speed;
+        this.velocity.dy = speed;
         break;
       case 'left':
-        this.velocity.x = -speed;
+        this.velocity.dx = -speed;
         break;
       case 'right':
-        this.velocity.x = speed;
+        this.velocity.dx = speed;
         break;
     }
   }
 
   desaccelerate() {
-    this.velocity = {x: 0, y: 0};
+    this.velocity = {dx: 0, dy: 0};
   }
 
   moveSegments() {
     const FIRST_SEGMENT = 0;
 
-    //  Move the head of the snake
-    this.head.x += this.velocity.x;
-    this.head.y += this.velocity.y;
+    this.head.x += this.velocity.dx;
+    if (this.hasWallCollisions()) {
+      this.head.x -= this.velocity.dx;
+    }
 
+    this.head.y += this.velocity.dy;
+    if (this.hasWallCollisions()) {
+      this.head.y -= this.velocity.dy;
+    }
+    
     // Move the first body segment
     this.moveSegmentTowards(this.body[FIRST_SEGMENT], this.head);
 
@@ -149,7 +166,7 @@ export class Snake {
   }
 
   decreaseSpeed(value) {
-    this.speed = Math.max(snake.minSpeed, snake.speed - value);
+    this.speed = Math.max(snake.minSpeed, this.speed - value);
   }
 
   increaseSpeed(value) {

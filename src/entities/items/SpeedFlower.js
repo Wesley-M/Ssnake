@@ -22,7 +22,7 @@ export class SpeedFlower {
    * @param  {Snake}  snake The snake in which the effect takes place
    * @param  {Number} value The speed value to be added
    */
-  applyEffect(snake, value = 1) {
+  applyEffect(snake, value = 0.5) {
     snake.increaseSpeed(value);
   }
 }

@@ -1,6 +1,6 @@
 /**
  * A light source that follows an object
-*/
+ */
 export class LightSource {
   /**
    * Creates an instance of LightSource.
@@ -11,9 +11,12 @@ export class LightSource {
    */
   constructor(obj, ratio) {
     this.obj = obj;
-    this.position = {x: this.obj.position.x, y: this.obj.position.y};
+    this.position = {
+      x: this.obj.position.x - this.obj.camera.x,
+      y: this.obj.position.y - this.obj.camera.y
+    };
     this.ratio = ratio;
-    this.minRatio = 10;
+    this.minRatio = 5;
   }
 
   increaseRatio(value) {
@@ -28,6 +31,9 @@ export class LightSource {
    * Update the position of the light
    */
   update() {
-    this.position = {x: this.obj.position.x, y: this.obj.position.y};
+    this.position = {
+      x: this.obj.position.x - this.obj.camera.x,
+      y: this.obj.position.y - this.obj.camera.y
+    };
   }
 }

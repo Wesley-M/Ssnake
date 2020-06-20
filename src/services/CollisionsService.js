@@ -1,11 +1,12 @@
 import {CollisionDetecter} from '../../engine/index.js'
 
 export class CollisionsService {
-  constructor() {
+  constructor(map) {
     this.collisionDetecter = new CollisionDetecter();
+    this.map = map;
   }
 
-  getItemsFromCollision(snake, items) {
+  getItemsFromCollision() {
     const circleCollisionItems = items.map((item) => {
       return {
         centerPoint: {
@@ -25,4 +26,16 @@ export class CollisionsService {
     return this.collisionDetecter.detect(
         circleCollisionSnake, circleCollisionItems);
   }
+
+  checkWallCollisions(targetPosition) {
+    const between = (x, start, end) => (x >= start && x <= end);
+    for (let wall of this.map.walls) {
+      if (between(targetPosition.x, wall.x, wall.x + wall.width) &&
+          between(targetPosition.y, wall.y, wall.y + wall.height)) {
+        return true; 
+      }
+    }
+    return false;
+  }
+
 }

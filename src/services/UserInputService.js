@@ -1,7 +1,7 @@
 import { KeyControls } from '../../engine/index.js'
 
 export class UserInputService {
-  initSnakeMoves(snake) {
+  initSnakeControls(snake) {
     const controls = new KeyControls();
 
     controls.addKeyAction({

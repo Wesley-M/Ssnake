@@ -22,7 +22,7 @@ export class Food {
    * @param  {Snake}  snake The snake in which the effect takes place
    * @param  {Number} value The number of segments to be added to the snake tail
    */
-  applyEffect(snake, value = 2) {
+  applyEffect(snake, value = 5) {
     snake.eat(value);
   }
 }
