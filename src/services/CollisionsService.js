@@ -6,8 +6,8 @@ export class CollisionsService {
     this.map = map;
   }
 
-  getItemsFromCollision() {
-    const circleCollisionItems = items.map((item) => {
+  getItemsFromCollision(snake) {
+    const circleCollisionItems = this.map.items.map((item) => {
       return {
         centerPoint: {
           x: item.position.x + Math.round(item.width / 2),

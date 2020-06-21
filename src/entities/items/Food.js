@@ -6,7 +6,7 @@ import {NORMAL_PROB} from '../../config/settings.js'
  */
 export class Food {
   constructor(
-      position, width = 24, height = 24, active = true,
+      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
       rarityClass = NORMAL_PROB) {
     this.rarityClass = rarityClass;
     this.active = active;

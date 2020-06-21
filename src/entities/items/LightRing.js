@@ -6,7 +6,7 @@ import {RARE_PROB_LEVEL_1} from '../../config/settings.js'
  */
 export class LightRing {
   constructor(
-      position, width = 24, height = 24, active = true,
+      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
       rarityClass = RARE_PROB_LEVEL_1) {
     this.rarityClass = rarityClass;
     this.active = active;

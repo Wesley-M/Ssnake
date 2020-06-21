@@ -73,6 +73,17 @@ export class CanvasRenderer {
   renderSnake(child, ctx) {
     // Draws an segment of the snake.
     function drawSegment(x, y, ratio) {
+       // Creating radial gradient
+      let radialGradient =
+          ctx.createRadialGradient(x, y, 0, x, y, ratio);
+
+      // Adding the color stops to the gradient
+      radialGradient.addColorStop(0, '#eeeeee');
+      radialGradient.addColorStop(1, '#3477ba');
+
+      // Drawing the circle of light
+      ctx.fillStyle = radialGradient;
+
       ctx.beginPath();
       ctx.arc(x, y, ratio, 0, 2 * Math.PI);
       ctx.fill();
@@ -91,14 +102,8 @@ export class CanvasRenderer {
       child.camera.y += ((cameraTargetY - child.camera.y) / 10 >> 0);
     }
 
-    // Defining the snake color.
-    const SNAKE_COLOR = 'darkgreen';
-    
     // Render the snake below the light source.
     ctx.globalCompositeOperation = 'source-over';
-
-    // Using the snake color
-    ctx.fillStyle = SNAKE_COLOR;
 
     // Updating the camera position before drawing
     updateCameraPosition();
@@ -146,8 +151,8 @@ export class CanvasRenderer {
     const rowLength =
         child.tilemap.tilesets[layerId['background']].imagewidth / tileWidth;
 
-    const cameraTileY = child.camera.y / (tileWidth) >> 0;
-    const cameraTileX = child.camera.x / (tileWidth) >> 0;
+    const cameraTileY = child.camera.y / (tileWidth + child.zoom) >> 0;
+    const cameraTileX = child.camera.x / (tileWidth + child.zoom) >> 0;
     const tileXCount = ctx.canvas.clientWidth / tileWidth >> 0;
     const tileYCount = ctx.canvas.clientHeight / tileWidth >> 0;
 
@@ -159,7 +164,6 @@ export class CanvasRenderer {
 
             if (i >= 0 && j >= 0 && i < child.tilemap.layers[layer].height &&
                 j < child.tilemap.layers[layer].width) {
-
               data = child.tilemap.layers[layer]
                          .data[i * child.tilemap.layers[layer].width + j];
 
@@ -170,18 +174,22 @@ export class CanvasRenderer {
 
               if (tileFrameX >= 0 && tileFrameY >= 0) {
                 ctx.drawImage(
-                    sprite, tileWidth * tileFrameX, 
-                    tileWidth * tileFrameY,
-                    tileWidth, tileWidth, 
-                    (j * (tileWidth) - child.camera.x) >> 0,
-                    (i * (tileWidth) - child.camera.y) >> 0, 
-                    tileWidth, tileWidth);
+                    sprite, tileWidth * tileFrameX, tileWidth * tileFrameY,
+                    tileWidth, tileWidth,
+                    (j * (tileWidth + child.zoom) - child.camera.x) >> 0,
+                    (i * (tileWidth + child.zoom) - child.camera.y) >> 0,
+                    tileWidth + child.zoom, tileWidth + child.zoom);
               }
             }
           }
         }
       }
     }
+
+    child.items.forEach(item => {
+      ctx.drawImage(item.texture.img, item.position.x - child.camera.x, 
+          item.position.y - child.camera.y, item.width, item.height);
+    });
   }
 
   /**
@@ -214,8 +222,8 @@ export class CanvasRenderer {
         ctx.createRadialGradient(x, y, 0, x, y, visionFieldRatio);
 
     // Adding the color stops to the gradient
-    radialGradient.addColorStop(0, 'rgba(255, 183, 0, 0.09)');
-    radialGradient.addColorStop(lightRatio / 10, `rgba(255, 183, 0, 0.1)`);
+    radialGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+    radialGradient.addColorStop(lightRatio / 10, `rgba(255, 255, 255, 0.09)`);
     radialGradient.addColorStop(
         (lightRatio / 2) + variation, `rgba(0, 0, 0, 0.7)`);
     radialGradient.addColorStop(

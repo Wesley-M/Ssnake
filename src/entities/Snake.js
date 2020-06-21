@@ -1,20 +1,29 @@
 export class Snake {
-  constructor(camera, x = 10, y = 10, collisionsService) {
+  constructor(camera, x = 10, y = 10, segmentRatio, collisionsService) {
     this.head = {x, y};
     this.body = [];
-    this.position = this.head;
-    this.speed = 1;
-    this.velocity = {dx: 0, dy: 0};
-    this.segmentRatio = 4;
-    this.minLength = 20;
-    this.minSpeed = 1;
-    this.currentDirection;
+    this.minLength = 120;
+    this.segmentRatio = segmentRatio;
     this.distanceBetweenSegments = 2;
+
+    this.position = this.head;
+    this.speed = 2.5;
+    this.velocity = {dx: 0, dy: 0};
+    this.minSpeed = 1;
+    this.decreaseSpeedOnTurningBy = 0.3;
+    
+    this.currentDirection = null;
     this.turning = false;
     this.turningIterations = 20;
-    this.decreaseSpeedOnTurningBy = 0.3;
+    
     this.keys = 0;
     this.dead = false;
+
+    this.slitherLastUpdate = 0;
+    this.slitherCounter = 0;
+    this.slitherAmplitude = 9;
+    this.slitherLastVariation = null;
+
     this.collisionsService = collisionsService;
     this.camera = camera;
 
@@ -38,9 +47,6 @@ export class Snake {
   }
 
   move(direction) {
-    const oppositeDirections =
-        {'up': 'down', 'left': 'right', 'right': 'left', 'down': 'up'};
-
     const oldDirection = this.currentDirection;
     this.currentDirection = direction;
 
@@ -166,14 +172,41 @@ export class Snake {
   }
 
   decreaseSpeed(value) {
-    this.speed = Math.max(snake.minSpeed, this.speed - value);
+    this.speed = Math.max(this.minSpeed, this.speed - value);
   }
 
   increaseSpeed(value) {
     this.speed += value;
   }
 
-  update() {
+  update(dt, t) {
+    if (t - this.slitherLastUpdate > 0.02) {
+      this.slitherVariation = this.slitherAmplitude * Math.sin((10/4) * this.slitherCounter);
+      
+      if (this.slitherLastVariation === null) { 
+        this.slitherLastVariation = this.slitherVariation;
+      }
+
+      if (['up', 'down'].includes(this.currentDirection)) {
+        this.position.x = this.position.x - this.slitherLastVariation + this.slitherVariation;
+        if (this.hasWallCollisions()) {
+          this.position.x = this.position.x + this.slitherLastVariation - this.slitherVariation;
+        }
+      } else {
+        this.position.y = this.position.y - this.slitherLastVariation + this.slitherVariation;
+        if (this.hasWallCollisions()) {
+          this.position.y = this.position.y + this.slitherLastVariation - this.slitherVariation;
+        }
+      }
+
+      if (this.slitherLastVariation != this.slitherVariation) {
+        this.slitherLastVariation = this.slitherVariation;
+      }
+
+      this.slitherCounter = (this.slitherCounter + 0.1) % 100;
+      this.slitherLastUpdate = t;
+    }
+
     this.move(this.currentDirection);
   }
 }

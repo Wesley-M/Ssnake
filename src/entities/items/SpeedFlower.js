@@ -6,7 +6,7 @@ import {RARE_PROB_LEVEL_2} from '../../config/settings.js'
  */
 export class SpeedFlower {
   constructor(
-      position, width = 24, height = 24, active = true,
+      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
       rarityClass = RARE_PROB_LEVEL_2) {
     this.rarityClass = rarityClass;
     this.active = active;

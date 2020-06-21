@@ -5,7 +5,7 @@ import {Texture} from '../../../engine/index.js'
  */
 export class Key {
   constructor(
-      position, width = 24, height = 24, active = true,
+      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
       rarityClass = undefined) {
     this.rarityClass = rarityClass;
     this.active = active;
