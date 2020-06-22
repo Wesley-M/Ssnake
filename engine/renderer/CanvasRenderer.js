@@ -157,7 +157,7 @@ export class CanvasRenderer {
     const tileYCount = ctx.canvas.clientHeight / tileWidth >> 0;
 
     if (child.tilemap.layers) {
-      for (let layer = 0; layer < 2; layer++) {
+      for (let layer = 0; layer < child.tilemap.layers.length - 1; layer++) {
         for (let i = cameraTileY - 1; i < cameraTileY + tileYCount + 2; i++) {
           for (let j = cameraTileX - 1; j < cameraTileX + tileXCount + 2; j++) {
             let data = 0;

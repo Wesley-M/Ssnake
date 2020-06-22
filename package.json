@@ -4,7 +4,7 @@
   "description": "",
   "main": "Game.js",
   "scripts": {
-    "start": "budo src/main.js:build.js --live",
+    "start": "budo src/launcher.js:build.js --live",
     "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "repository": {

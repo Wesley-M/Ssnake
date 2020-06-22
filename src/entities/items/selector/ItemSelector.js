@@ -29,8 +29,6 @@ export class ItemSelector {
     // Here we select one of the items that share the same rarity class
     let randomIndex = Math.floor(itemsToChooseFrom.length * Math.random());
 
-    console.log(itemsToChooseFrom[randomIndex]);
-
     return itemsToChooseFrom[randomIndex];
   }
 
@@ -68,7 +66,6 @@ export class ItemSelector {
    * @return {Array}       Array of items that share this class.
    */
   getPossibleItems(prob) {
-    console.log('Rarity class: ' + prob);
     let itemsToChooseFrom = [];
     // Get all the items that happen with this probability
     Object.keys(ITEMS_MAP).forEach(name => {

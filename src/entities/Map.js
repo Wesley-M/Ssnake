@@ -9,15 +9,15 @@ export class Map {
     this.level = level;
     this.margin = 50;
     this.hasLoaded = false;
-    
+
     this.items = [];
     this.itemSlots = [];
-    this.minItems = 5;
+    this.minItems = 6;
     this.walls = [];
-    
+
     this.camera = camera;
-    this.zoom = 20;
-  
+    this.zoom = 15;
+    this.hasLightSource = null;
   }
 
   load() {
@@ -27,6 +27,7 @@ export class Map {
       loader.loadImage(`src/maps/${this.level}/sprite_sheet.png`).then(img => {
         this.loadObjects();
         this.tilesheet = img;
+        this.hasLightSource = this.tilemap.properties.hasLightSource;
         this.hasLoaded = true;
       });
     });
@@ -49,16 +50,15 @@ export class Map {
     });
 
     const layer = layerId['trigger'];
-    
+
     if (this.tilemap.layers[layer]) {
       this.tilemap.layers[layer].objects.forEach((obj) => {
-        
         // Apply zoom in the object
         this.adjustObjScale(obj);
-        
-        switch(obj.name) {
+
+        switch (obj.name) {
           case 'isInitialPosition':
-            this.initialSnakePosition = { 
+            this.initialSnakePosition = {
               x: obj.x + (obj.width / 2),
               y: obj.y + (obj.height / 2)
             };
@@ -76,17 +76,26 @@ export class Map {
   }
 
   placeItems() {
-    const selector = new ItemSelector();
-    let itemsToBeCreated = Math.abs(this.items.length - this.minItems);
-    while (itemsToBeCreated > 0) {
-      const randomIndex = Math.floor(Math.random() * this.itemSlots.length);
-      let slot = this.itemSlots[randomIndex];
-      let item = selector.getItem();
-      console.log(item);
-      item.position.x = slot.x;
-      item.position.y = slot.y;
-      this.items.push(item);
-      itemsToBeCreated = this.items.length - this.minItems;
+    let itemsToBeCreated = this.minItems - this.items.length;
+
+    if (itemsToBeCreated > 0) {
+      const selector = new ItemSelector();
+      let itemsSet = {};
+      while (Object.keys(itemsSet).length < itemsToBeCreated) {
+        const randomIndex = Math.floor(Math.random() * this.itemSlots.length);
+        let slot = this.itemSlots[randomIndex];
+        let item = selector.getItem();
+
+        item.position.x = slot.x;
+        item.position.y = slot.y;
+
+        itemsSet[`(${slot.x},${slot.y})`] = item;
+      }
+      
+      // This concats the itemsSet values array into the items
+      this.items.push.apply(this.items, Object.values(itemsSet));
+
+      console.log(this.items);
     }
   }
 
