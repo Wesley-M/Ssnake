@@ -1,41 +1,22 @@
-import {CollisionDetecter} from '../../engine/index.js'
+import {ShapeCollision} from '../../engine/index.js'
 
 export class CollisionsService {
   constructor(map) {
-    this.collisionDetecter = new CollisionDetecter();
+    this.detecter = new ShapeCollision();
     this.map = map;
   }
 
   getItemsFromCollision(snake) {
-    const circleCollisionItems = this.map.items.map((item) => {
-      return {
-        centerPoint: {
-          x: item.position.x + Math.round(item.width / 2),
-          y: item.position.y + Math.round(item.height / 2)
-        },
-        ratio: Math.round(item.width / 2),
-        props: item
-      };
-    });
+    let snakeCopy = Object.assign({}, snake);
 
-    const circleCollisionSnake = {
-      centerPoint: snake.head,
-      ratio: snake.segmentRatio
-    };
-
-    return this.collisionDetecter.detect(
-        circleCollisionSnake, circleCollisionItems);
+    snakeCopy.width = snakeCopy.segmentRatio;
+    snakeCopy.height = snakeCopy.segmentRatio;
+    
+    return this.detecter.detectCollisions('circle', snakeCopy, this.map.items);
   }
 
-  checkWallCollisions(targetPosition) {
-    const between = (x, start, end) => (x >= start && x <= end);
-    for (let wall of this.map.walls) {
-      if (between(targetPosition.x, wall.x, wall.x + wall.width) &&
-          between(targetPosition.y, wall.y, wall.y + wall.height)) {
-        return true; 
-      }
-    }
-    return false;
+  checkWallCollisions(snake) {
+    return this.detecter.detectCollisions('rect', snake, this.map.walls).length > 0;
   }
 
 }

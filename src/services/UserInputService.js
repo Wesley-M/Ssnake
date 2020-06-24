@@ -28,7 +28,7 @@ export class UserInputService {
     controls.addKeyAction({
       event: 'keydown',
       keyCodes: [38, 87],  // ArrowUp | w
-      run: () => snake.move('up'),
+      run: () => { snake.move('up'); },
       triggerOnce: false
     });
 

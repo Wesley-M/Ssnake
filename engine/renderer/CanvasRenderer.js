@@ -24,8 +24,7 @@ export class CanvasRenderer {
   render(container) {
     const {ctx} = this;
 
-    const renderRec =
-        (ctx, container) => {
+    const renderRec = (ctx, container) => {
           container.children.forEach((child) => {
             if (child.visible == false) return;  // Check visibility
 
@@ -40,9 +39,8 @@ export class CanvasRenderer {
           });
         }
 
-                            ctx.clearRect(
-                                0, 0, this.w, this.h);  // Cleaning the canvas
-    renderRec(ctx, container);                          // Recursion call
+    ctx.clearRect(0, 0, this.w, this.h); // Cleaning the canvas
+    renderRec(ctx, container); // Recursion call
   }
 
   /**

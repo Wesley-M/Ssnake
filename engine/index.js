@@ -1,12 +1,12 @@
 import { KeyControls } from './controls/KeyControls.js'
 import { CanvasRenderer } from './renderer/CanvasRenderer.js'
-import { Container } from './utils/Container.js'
-import { LightSource } from './utils/LightSource.js'
-import { Sound } from './utils/Sound.js'
-import { Texture } from './utils/Texture.js'
-import { Loader } from './utils/Loader.js'
-import { Camera } from './utils/Camera.js'
-import { CollisionDetecter } from './collisions/CollisionDetecter.js'
+import { Container } from './objects/Container.js'
+import { LightSource } from './objects/LightSource.js'
+import { Sound } from './objects/Sound.js'
+import { Texture } from './objects/Texture.js'
+import { Loader } from './Loader.js'
+import { Camera } from './objects/Camera.js'
+import { ShapeCollision } from './collisions/ShapeCollision.js'
 
 export {
   CanvasRenderer,
@@ -15,7 +15,7 @@ export {
   Sound,
   Texture,
   KeyControls,
-  CollisionDetecter,
+  ShapeCollision,
   Loader,
   Camera
 };

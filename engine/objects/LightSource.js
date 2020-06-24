@@ -19,16 +19,22 @@ export class LightSource {
     this.minRatio = 5;
   }
 
+  /**
+   * Increases the ratio of the light source
+  */
   increaseRatio(value) {
     this.ratio = Math.min(this.ratio + value, 100);
   }
 
+  /**
+   * Decreases the ratio of the light source
+  */
   decreaseRatio(value) {
     this.ratio = Math.max(this.minRatio, this.ratio - value);
   }
 
   /**
-   * Update the position of the light
+   * Updates the position of the light
    */
   update() {
     this.position = {

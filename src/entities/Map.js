@@ -27,7 +27,10 @@ export class Map {
       loader.loadImage(`src/maps/${this.level}/sprite_sheet.png`).then(img => {
         this.loadObjects();
         this.tilesheet = img;
-        this.hasLightSource = this.tilemap.properties.hasLightSource;
+        this.hasLightSource =
+            this.tilemap.properties
+                .filter(prop => prop.name === 'hasLightSource')[0]
+                .value;
         this.hasLoaded = true;
       });
     });
@@ -80,22 +83,30 @@ export class Map {
 
     if (itemsToBeCreated > 0) {
       const selector = new ItemSelector();
-      let itemsSet = {};
-      while (Object.keys(itemsSet).length < itemsToBeCreated) {
-        const randomIndex = Math.floor(Math.random() * this.itemSlots.length);
-        let slot = this.itemSlots[randomIndex];
+      let slots = [...this.itemSlots];
+      let items = [...this.items];
+
+      let freeSlots = slots.filter(slot => {
+        return items.filter(
+            item => item.position.x === slot.x &&
+            item.position.y === slot.y).length === 0;
+      });
+
+      while (Object.keys(items).length < itemsToBeCreated) {
+        const randomIndex = Math.floor(Math.random() * freeSlots.length);
+        let slot = freeSlots[randomIndex];
         let item = selector.getItem();
 
         item.position.x = slot.x;
         item.position.y = slot.y;
 
-        itemsSet[`(${slot.x},${slot.y})`] = item;
-      }
-      
-      // This concats the itemsSet values array into the items
-      this.items.push.apply(this.items, Object.values(itemsSet));
+        // Occupy slot
+        freeSlots.splice(randomIndex, 1);
 
-      console.log(this.items);
+        items.push(item);
+      }
+
+      this.items = items;
     }
   }
 

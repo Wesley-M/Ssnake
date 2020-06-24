@@ -14,7 +14,7 @@ export class Game {
 
   init() {
     this.camera = new Camera(-GAME_WIDTH / 2, -GAME_HEIGHT / 2);
-    this.level = 'level01';
+    this.level = 'level00';
     this.scene = null;
     this.snake = null;
     this.light = null;
@@ -29,14 +29,14 @@ export class Game {
         .then((map) => {
           this.map = map;
           this.enableLight = map.hasLightSource;
-
+          
           this.initServices();
           this.initPlayer();
+          this.initControls();
           this.initLight();
 
           this.populateScene([this.map, this.snake, this.light]);
           this.initRenderer();
-          this.initControls();
 
           this.hasLoaded = true;
         })
@@ -99,8 +99,7 @@ export class Game {
 
   initLight() {
     if (this.enableLight) {
-      this.light = new LightSource(snake, /* ratio= */ 10);
+      this.light = new LightSource(this.snake, /* ratio= */ 10);
     }
-    return null;
   }
 }

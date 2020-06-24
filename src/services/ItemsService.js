@@ -12,17 +12,17 @@ export class ItemsService {
         collisionsService.getItemsFromCollision(itemTargets.snake);
 
     collisionItems.forEach((item) => {
-      switch(item.props.target) {
+      switch(item.target) {
         case 'snake':
-          item.props.applyEffect(itemTargets.snake);
+          item.applyEffect(itemTargets.snake);
           break;
         case 'light':
-          item.props.applyEffect(itemTargets.light);
+          item.applyEffect(itemTargets.light);
           break;
         default:
       }
 
-      item.props.active = false;
+      item.active = false;
     });
   }
 }

@@ -2,7 +2,7 @@ export class Snake {
   constructor(camera, x = 10, y = 10, segmentRatio, collisionsService) {
     this.head = {x, y};
     this.body = [];
-    this.minLength = 120;
+    this.minLength = 30;
     this.segmentRatio = segmentRatio;
     this.distanceBetweenSegments = 2;
 
@@ -11,11 +11,11 @@ export class Snake {
     this.velocity = {dx: 0, dy: 0};
     this.minSpeed = 1;
     this.decreaseSpeedOnTurningBy = 0.3;
-    
+
     this.currentDirection = null;
     this.turning = false;
     this.turningIterations = 20;
-    
+
     this.keys = 0;
     this.dead = false;
 
@@ -42,8 +42,7 @@ export class Snake {
   }
 
   hasWallCollisions() {
-    return this.collisionsService.checkWallCollisions(
-        {x: this.position.x, y: this.position.y});
+    return this.collisionsService.checkWallCollisions(this);
   }
 
   move(direction) {
@@ -52,7 +51,7 @@ export class Snake {
 
     const newSpeed = this.getNewSpeed(oldDirection);
     this.changeVelocity(direction, newSpeed);
-    
+
     this.moveSegments();
   }
 
@@ -116,7 +115,7 @@ export class Snake {
     if (this.hasWallCollisions()) {
       this.head.y -= this.velocity.dy;
     }
-    
+
     // Move the first body segment
     this.moveSegmentTowards(this.body[FIRST_SEGMENT], this.head);
 
@@ -181,21 +180,26 @@ export class Snake {
 
   update(dt, t) {
     if (t - this.slitherLastUpdate > 0.02) {
-      this.slitherVariation = this.slitherAmplitude * Math.sin((10/4) * this.slitherCounter);
-      
-      if (this.slitherLastVariation === null) { 
+      this.slitherVariation =
+          this.slitherAmplitude * Math.sin((10 / 4) * this.slitherCounter);
+
+      if (this.slitherLastVariation === null) {
         this.slitherLastVariation = this.slitherVariation;
       }
 
       if (['up', 'down'].includes(this.currentDirection)) {
-        this.position.x = this.position.x - this.slitherLastVariation + this.slitherVariation;
+        this.position.x =
+            this.position.x - this.slitherLastVariation + this.slitherVariation;
         if (this.hasWallCollisions()) {
-          this.position.x = this.position.x + this.slitherLastVariation - this.slitherVariation;
+          this.position.x = this.position.x + this.slitherLastVariation -
+              this.slitherVariation;
         }
       } else {
-        this.position.y = this.position.y - this.slitherLastVariation + this.slitherVariation;
+        this.position.y =
+            this.position.y - this.slitherLastVariation + this.slitherVariation;
         if (this.hasWallCollisions()) {
-          this.position.y = this.position.y + this.slitherLastVariation - this.slitherVariation;
+          this.position.y = this.position.y + this.slitherLastVariation -
+              this.slitherVariation;
         }
       }
 
