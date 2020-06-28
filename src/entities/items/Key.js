@@ -1,19 +1,20 @@
-import {Texture} from '../../../engine/index.js'
+import {RARE_PROB_LEVEL_2} from '../../../engine/config/settings.js'
+import {Item} from '../../../engine/index.js'
 
 /**
  * This item represents a key that will be given to the snake
  */
-export class Key {
-  constructor(
-      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
-      rarityClass = undefined) {
-    this.rarityClass = rarityClass;
-    this.active = active;
-    this.position = position;
-    this.width = width;
-    this.height = height;
-    this.target = 'snake';
-    this.texture = new Texture('../../../res/img/key.png', width, height);
+export class Key extends Item {
+  constructor({position, width, height, active} = {}) {
+    super({
+      position: position, 
+      width, 
+      height, 
+      active, 
+      rarityClass: RARE_PROB_LEVEL_2, 
+      targetName: 'snake',
+      textureFilename: '../../../res/img/key.png'
+    });
   }
 
   /**

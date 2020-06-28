@@ -1,7 +1,6 @@
-import {Camera, CanvasRenderer, Container, LightSource} from '../engine/index.js'
+import {Camera, Container, LightSource, Map, PIXIRenderer} from '../engine/index.js'
 
-import {GAME_HEIGHT, GAME_WIDTH, MAX_FRAMES} from './config/settings.js'
-import {Map} from './entities/Map.js'
+import {GAME_HEIGHT, GAME_WIDTH, MAX_FRAMES, ALL_ITEMS} from './config/settings.js'
 import {Snake} from './entities/Snake.js'
 import {CollisionsService} from './services/CollisionsService.js'
 import {ItemsService} from './services/ItemsService.js'
@@ -13,33 +12,41 @@ export class Game {
   }
 
   init() {
-    this.camera = new Camera(-GAME_WIDTH / 2, -GAME_HEIGHT / 2);
-    this.level = 'level00';
+    this.camera = new Camera(0, 0);
+    this.level = 'level01';
     this.scene = null;
     this.snake = null;
     this.light = null;
+    this.map = null;
     this.enableLight = false;
     this.hasLoaded = false;
+    this.renderer = new PIXIRenderer(GAME_WIDTH, GAME_HEIGHT);
     this.load();
   }
 
   load() {
-    new Map(GAME_WIDTH, GAME_HEIGHT, this.level, this.camera)
-        .load()
-        .then((map) => {
-          this.map = map;
-          this.enableLight = map.hasLightSource;
-          
+    this.renderer
+        .loader([
+            '../res/maps/level00/settings.json',
+            '../res/maps/level00/map.json', 
+            '../res/maps/level00/sprite_sheet.png',
+            '../res/maps/level01/settings.json',
+            '../res/maps/level01/map.json', 
+            '../res/maps/level01/sprite_sheet.png'
+        ])
+        .load(() => {
+
+          this.initMap();
           this.initServices();
           this.initPlayer();
           this.initControls();
-          this.initLight();
+          // this.initLight();
 
-          this.populateScene([this.map, this.snake, this.light]);
+          this.populateScene([this.map, this.snake]);
           this.initRenderer();
 
           this.hasLoaded = true;
-        })
+        });
   }
 
   run() {
@@ -56,8 +63,7 @@ export class Game {
       if (this.hasLoaded) {
         this.scene.update(dt, t);
         this.renderer.render(this.scene);
-        this.itemsService.checkCollisions(
-            /* itemsTarget= */ {light: this.light, snake: this.snake});
+        this.itemsService.checkCollisions(/* itemsTarget= */  {snake: this.snake});
       }
     };
 
@@ -73,6 +79,20 @@ export class Game {
     });
   }
 
+  initMap() {
+    const resources = PIXI.Loader.shared.resources;
+
+    const itemsDomain = resources[`../res/maps/${this.level}/settings.json`].data.items;
+
+    this.map = new Map(GAME_WIDTH, GAME_HEIGHT, this.camera, this.level, ALL_ITEMS, itemsDomain);
+    
+    this.map.tilemap = resources[`../res/maps/${this.level}/map.json`].data;
+    this.map.tilesheet = resources[`../res/maps/${this.level}/sprite_sheet.png`].texture;
+    this.map.hasLightSource = this.map.getTilemapProp('hasLightSource');
+    this.map.hasLoaded = true;
+    this.map.load();
+  }
+
   initServices() {
     this.userInputService = new UserInputService();
     this.itemsService = new ItemsService(this.map);
@@ -84,17 +104,17 @@ export class Game {
   }
 
   initRenderer() {
-    this.renderer = new CanvasRenderer(GAME_WIDTH, GAME_HEIGHT);
-    document.querySelector('#board').appendChild(this.renderer.view);
+    document.querySelector('#board').appendChild(this.renderer.ctx.view);
   }
 
   initPlayer() {
     this.snake = new Snake(...[
-        /* camera= */ this.camera,
-        /* x= */ this.map.initialSnakePosition.x,
-        /* y= */ this.map.initialSnakePosition.y,
-        /* segmentRatio= */ this.map.zoom / 3,
-        /* collisionsService= */ this.collisionsService]);
+        /* camera= */ this.camera, 
+        this.map.initialPlayerPosition.x, 
+        this.map.initialPlayerPosition.y, 
+        (this.map.zoom / 3) + 3, 
+        this.collisionsService
+      ]);
   }
 
   initLight() {

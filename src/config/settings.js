@@ -1,24 +1,36 @@
-export const NORMAL_PROB = 0.8;
-export const RARE_PROB = (1 - NORMAL_PROB);
-export const RARE_PROB_LEVEL_1 = 0.8 * RARE_PROB;
-export const RARE_PROB_LEVEL_2 = 0.2 * RARE_PROB;
-
-export const POSSIBLE_PROBS = [
-  NORMAL_PROB,
-  RARE_PROB_LEVEL_1,    
-  RARE_PROB_LEVEL_2,   
-];
+import { Mushroom } from '../entities/items/Mushroom.js';
+import { DarkRing } from '../entities/items/DarkRing.js';
+import { LightRing } from '../entities/items/LightRing.js';
+import { Poison } from '../entities/items/Poison.js';
+import { SpeedFlower } from '../entities/items/SpeedFlower.js';
+import { DeathItem } from '../entities/items/DeathItem.js';
+import { Food } from '../entities/items/Food.js';
 
 const CLIENT_WIDTH = window.innerWidth ||
-                     document.documentElement.clientWidth || 
-                     document.body.clientWidth;
+    document.documentElement.clientWidth || document.body.clientWidth;
 
 const CLIENT_HEIGHT = window.innerHeight ||
-                      document.documentElement.clientHeight || 
-                      document.body.clientHeight;
+    document.documentElement.clientHeight || document.body.clientHeight;
 
-export const GAME_WIDTH = CLIENT_WIDTH * 0.7;
-export const GAME_HEIGHT = CLIENT_HEIGHT * 0.8;
+const GAME_WIDTH = CLIENT_WIDTH * 0.7;
+const GAME_HEIGHT = CLIENT_HEIGHT * 0.8;
 
 const FRAME_STEP = 1 / 60;
-export const MAX_FRAMES = FRAME_STEP * 5;
+const MAX_FRAMES = FRAME_STEP * 5;
+
+const ALL_ITEMS = {
+  mushroom: Mushroom,
+  poison: Poison,
+  food: Food,
+  dark_ring: DarkRing,
+  light_ring: LightRing,
+  death_item: DeathItem,
+  speed_flower: SpeedFlower
+}
+
+export {
+    GAME_WIDTH,
+    GAME_HEIGHT,
+    MAX_FRAMES,
+    ALL_ITEMS
+};

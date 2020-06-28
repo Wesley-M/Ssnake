@@ -1,20 +1,20 @@
-import {Texture} from '../../../engine/index.js'
-import {NORMAL_PROB} from '../../config/settings.js'
+import {NORMAL_PROB} from '../../../engine/config/settings.js'
+import {Item} from '../../../engine/index.js'
 
 /**
  * This item feeds the snake
  */
-export class Food {
-  constructor(
-      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
-      rarityClass = NORMAL_PROB) {
-    this.rarityClass = rarityClass;
-    this.active = active;
-    this.position = position;
-    this.width = width;
-    this.height = height;
-    this.target = 'snake';
-    this.texture = new Texture('../../../res/img/meat.png', width, height);
+export class Food extends Item {
+  constructor({position, width, height, active} = {}) {
+    super({
+      position: position, 
+      width, 
+      height, 
+      active, 
+      rarityClass: NORMAL_PROB, 
+      targetName: 'snake',
+      textureFilename: '../../../res/img/meat.png'
+    });
   }
 
   /**

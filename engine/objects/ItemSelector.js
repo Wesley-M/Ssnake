@@ -1,7 +1,11 @@
-import { POSSIBLE_PROBS } from '../../../config/settings.js'
-import { ITEMS_MAP } from '../config/settings.js'
+import {POSSIBLE_PROBS} from '../config/settings.js'
 
 export class ItemSelector {
+  constructor(itemsMap, itemsDomain) {
+    this.itemsMap = itemsMap;
+    this.itemsDomain = itemsDomain;
+  }
+
   /**
    * This function returns a new item based on the name passed, if the name
    * is not found to be a valid item name, then the item will be choosed
@@ -10,11 +14,11 @@ export class ItemSelector {
    * @return {String} A new item.
    */
   getItem(itemName) {
-    if (ITEMS_MAP[itemName] != undefined) {
-      return new ITEMS_MAP[itemName]();
+    if (this.itemsMap[itemName] != undefined) {
+      return new this.itemsMap[itemName]();
     } else {
       let itemName = this.chooseRandomItemName();
-      return new ITEMS_MAP[itemName]();
+      return new this.itemsMap[itemName]();
     }
   }
 
@@ -68,9 +72,12 @@ export class ItemSelector {
   getPossibleItems(prob) {
     let itemsToChooseFrom = [];
     // Get all the items that happen with this probability
-    Object.keys(ITEMS_MAP).forEach(name => {
-      if (new ITEMS_MAP[name]().rarityClass.toFixed(3) == prob.toFixed(3)) {
-        itemsToChooseFrom.push(name);
+    Object.keys(this.itemsMap).forEach(name => {
+      let item = new this.itemsMap[name]();
+      if (item.rarityClass.toFixed(3) == prob.toFixed(3)) {
+        if (this.itemsDomain.includes(name)) {
+          itemsToChooseFrom.push(name);
+        }
       }
     });
     return itemsToChooseFrom;

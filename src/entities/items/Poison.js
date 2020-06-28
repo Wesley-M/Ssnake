@@ -1,20 +1,20 @@
-import {Texture} from '../../../engine/index.js'
-import {RARE_PROB_LEVEL_1} from '../../config/settings.js'
+import {RARE_PROB_LEVEL_1} from '../../../engine/config/settings.js'
+import {Item} from '../../../engine/index.js'
 
 /**
  * This item decreases the speed of the snake
  */
-export class Poison {
-  constructor(
-      position = {x: 0, y: 0}, width = 24, height = 24, active = true,
-      rarityClass = RARE_PROB_LEVEL_1) {
-    this.rarityClass = rarityClass;
-    this.active = active;
-    this.position = position;
-    this.width = width;
-    this.height = height;
-    this.target = 'snake';
-    this.texture = new Texture('../../../res/img/green_flask.png', width, height);
+export class Poison extends Item {
+  constructor({position, width, height, active} = {}) {
+    super({
+      position: position, 
+      width, 
+      height, 
+      active, 
+      rarityClass: RARE_PROB_LEVEL_1, 
+      targetName: 'snake',
+      textureFilename: '../../../res/img/green_flask.png'
+    });
   }
 
   /**

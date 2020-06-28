@@ -3,27 +3,29 @@ export class Snake {
     this.head = {x, y};
     this.body = [];
     this.minLength = 30;
+    this.distanceBetweenSegments = 1;
+
     this.segmentRatio = segmentRatio;
-    this.distanceBetweenSegments = 2;
+    this.tailPortion = (9 / 10);
 
     this.position = this.head;
-    this.speed = 2.5;
+    this.speed = 2;
     this.velocity = {dx: 0, dy: 0};
     this.minSpeed = 1;
-    this.decreaseSpeedOnTurningBy = 0.3;
-
+    this.decreaseSpeedOnTurningBy = 0.4;
+    
     this.currentDirection = null;
     this.turning = false;
     this.turningIterations = 20;
-
+    
     this.keys = 0;
     this.dead = false;
-
+    
     this.slitherLastUpdate = 0;
     this.slitherCounter = 0;
-    this.slitherAmplitude = 9;
+    this.slitherAmplitude = 3;
     this.slitherLastVariation = null;
-
+    
     this.collisionsService = collisionsService;
     this.camera = camera;
 
@@ -176,6 +178,13 @@ export class Snake {
 
   increaseSpeed(value) {
     this.speed += value;
+  }
+
+  updateCamera(canvasWidth, canvasHeight) {
+    const cameraTargetX = this.head.x - canvasWidth / 2;
+    this.camera.x += ((cameraTargetX - this.camera.x) / 10 >> 0);
+    const cameraTargetY = this.head.y - canvasHeight / 2;
+    this.camera.y += ((cameraTargetY - this.camera.y) / 10 >> 0);
   }
 
   update(dt, t) {
