@@ -2,8 +2,8 @@ export class Snake {
   constructor(camera, x = 10, y = 10, segmentRatio, collisionsService) {
     this.head = {x, y};
     this.body = [];
-    this.minLength = 30;
-    this.distanceBetweenSegments = 1;
+    this.minLength = 20;
+    this.distanceBetweenSegments = 3;
 
     this.segmentRatio = segmentRatio;
     this.tailPortion = (9 / 10);
@@ -23,7 +23,7 @@ export class Snake {
     
     this.slitherLastUpdate = 0;
     this.slitherCounter = 0;
-    this.slitherAmplitude = 3;
+    this.slitherAmplitude = 4;
     this.slitherLastVariation = null;
     
     this.collisionsService = collisionsService;

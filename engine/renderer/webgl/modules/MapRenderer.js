@@ -2,6 +2,7 @@ export class MapRenderer {
   constructor() {
     this.lastCamera = null;
     this.hasLoaded = false;
+    this.graphics = new PIXI.Graphics();
   }
 
   load(map, canvas) {
@@ -26,21 +27,10 @@ export class MapRenderer {
    */
   render(map, canvas) {
     this.checkMapLoad(map, canvas);
-
-    const canvasWidth = canvas.renderer.view.width;
-    const canvasHeight = canvas.renderer.view.height;
-
-    // Checks whether a x is in between two numbers
-    const between = (x, start, end) => (x >= start && x <= end);
-
+    
     if (map.tilemap.layers) {
       this.tilemapContainer.children.forEach(layer => {
         layer.children.forEach(tile => {
-          if (between(tile.y, map.camera.y, map.camera.y + canvasHeight)) {
-            if (between(tile.x, map.camera.x, map.camera.x + canvasWidth)) {
-              tile.visible = true;
-            }
-          }
           tile.x -= (map.camera.x - this.lastCamera.x);
           tile.y -= (map.camera.y - this.lastCamera.y);
         });
@@ -58,7 +48,7 @@ export class MapRenderer {
   }
 
   getLayerContainer(map, layerIndex) {
-    let layerContainer = new PIXI.ParticleContainer();
+    let layerContainer = new PIXI.ParticleContainer(2500);
 
     // Gets a layer map from name to id
     const layerId = this.getLayersMap(map);
@@ -69,16 +59,20 @@ export class MapRenderer {
     const canvasTileHeight = map.tilemap.height;
     const tilesheetWidth = tileset.imagewidth / tileWidth;
 
+    // console.log("Layer index: " + layerIndex);
+
     for (let i = 0; i < canvasTileHeight; i++) {
       for (let j = 0; j < canvasTileWidth; j++) {
         let tileIndex = this.getTileIndex(map, layerIndex, j, i);
 
         const tileFrameX = (tileIndex % tilesheetWidth) - 1;
-        const tileFrameY = Math.floor(tileIndex / tilesheetWidth);
+        const tileFrameY = tileIndex / tilesheetWidth >> 0;
 
         if (tileFrameX < 0 || tileFrameY < 0) continue;
 
-        const txt = this.createTileTexture(map.tilesheet, tileWidth, tileFrameX, tileFrameY);
+        const txt = this.createTileTexture(
+            map.tilesheet, tileWidth, tileFrameX, tileFrameY);
+
         const tile = this.createTile(map, txt, j, i, tileWidth);
 
         layerContainer.addChild(tile);
@@ -105,6 +99,9 @@ export class MapRenderer {
     // Image frame of the tile on the sprite sheet
     const frame = new PIXI.Rectangle(
         tileWidth * tileFrameX, tileWidth * tileFrameY, tileWidth, tileWidth);
+
+    // console.log(tileFrameX);
+    // console.log(tileFrameY);
 
     return new PIXI.Texture(tilesheet, frame);
   }

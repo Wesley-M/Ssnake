@@ -52,7 +52,6 @@ export class Map {
         layer.objects.forEach(obj => {
           // Apply zoom in the object.
           this.scale(obj);
-          // Select
           switch (obj.name) {
             case 'isInitialPosition':
               this.setInitialPlayerPosition(obj);

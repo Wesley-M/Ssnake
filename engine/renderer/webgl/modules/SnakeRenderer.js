@@ -1,7 +1,7 @@
 export class SnakeRenderer {
   constructor() {
     this.hasLoaded = false;
-    this.segmentsContainer = new PIXI.Container();
+    this.segmentsContainer = new PIXI.ParticleContainer();
   }
 
   load(snake, canvas) {
@@ -41,7 +41,7 @@ export class SnakeRenderer {
 
   update(snake, canvas, snakeLength, segmentsLength) {
     for (let i = 0; i < (snakeLength - segmentsLength); i++) {
-      let newSegment = this.createSegment(canvas, 10, 10, 10);
+      let newSegment = this.createSegment(10, 10, 10);
       this.segmentsContainer.addChild(newSegment);
     }
     this.updateSegmentsRatio(snake, canvas);
@@ -57,10 +57,13 @@ export class SnakeRenderer {
 
     segments.forEach((segment, index) => {
       const segmentRatio = snake.segmentRatio * segProportion;
-      const newSegment = this.createSegment(canvas, segment.x, segment.y, segmentRatio);
+      segment.width = 2 * segmentRatio;
+      segment.height = 2 * segmentRatio;
+
+      // const newSegment = this.createSegment(segment.x, segment.y, segmentRatio);
       
-      this.segmentsContainer.removeChildAt(index);
-      this.segmentsContainer.addChildAt(newSegment, index);
+      // this.segmentsContainer.removeChildAt(index);
+      // this.segmentsContainer.addChildAt(newSegment, index);
       
       if (!this.inBody(snake, index, tailLength)) segProportion -= decreaseProportion;
     });
@@ -86,15 +89,14 @@ export class SnakeRenderer {
   }
 
   createSegment(canvas, x, y, ratio) {
-    let gr = new PIXI.Graphics();
-    gr.beginFill(0xd9ce00);
-    gr.lineStyle(1);
-    gr.drawCircle(x, y, ratio);
-    gr.endFill();
-
-    let texture = canvas.renderer.generateTexture(gr);
-
-    return new PIXI.Sprite(texture);
+    const resources = PIXI.Loader.shared.resources;
+    const segTexture = resources[`../res/img/circle.png`].texture;
+    let segSprite = new PIXI.Sprite(segTexture);
+    segSprite.x = x;
+    segSprite.y = y;
+    segSprite.width = 2 * ratio;
+    segSprite.height = 2 * ratio;
+    return segSprite;
   }
 
   createHead(snake, canvas) {
@@ -105,7 +107,7 @@ export class SnakeRenderer {
     const headY = snake.head.y - camera.x - (segRatio / 2);
     const headRatio = snake.segmentRatio;
     
-    const headSprite = this.createSegment(canvas, headX, headY, headRatio);
+    const headSprite = this.createSegment(headX, headY, headRatio);
 
     this.segmentsContainer.addChild(headSprite);
   }
@@ -118,7 +120,7 @@ export class SnakeRenderer {
       const segmentX = segment.x - camera.x - (segRatio / 2);
       const segmentY = segment.y - camera.y - (segRatio / 2);
       
-      const segSprite = this.createSegment(canvas, segmentX, segmentY, 10);
+      const segSprite = this.createSegment(segmentX, segmentY, 10);
 
       this.segmentsContainer.addChild(segSprite);
     });

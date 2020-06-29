@@ -1,10 +1,9 @@
-import {Camera, Container, LightSource, Map, PIXIRenderer} from '../engine/index.js'
-
-import {GAME_HEIGHT, GAME_WIDTH, MAX_FRAMES, ALL_ITEMS} from './config/settings.js'
 import {Snake} from './entities/Snake.js'
 import {CollisionsService} from './services/CollisionsService.js'
 import {ItemsService} from './services/ItemsService.js'
 import {UserInputService} from './services/UserInputService.js'
+import {Camera, Container, LightSource, Map, PIXIRenderer} from '../engine/index.js'
+import {GAME_HEIGHT, GAME_WIDTH, MAX_FRAMES, ALL_ITEMS} from './config/settings.js'
 
 export class Game {
   constructor() {
@@ -13,7 +12,7 @@ export class Game {
 
   init() {
     this.camera = new Camera(0, 0);
-    this.level = 'level01';
+    this.level = 'level00';
     this.scene = null;
     this.snake = null;
     this.light = null;
@@ -32,7 +31,12 @@ export class Game {
             '../res/maps/level00/sprite_sheet.png',
             '../res/maps/level01/settings.json',
             '../res/maps/level01/map.json', 
-            '../res/maps/level01/sprite_sheet.png'
+            '../res/maps/level01/sprite_sheet.png',
+            '../res/maps/level02/settings.json',
+            '../res/maps/level02/map.json', 
+            '../res/maps/level02/sprite_sheet.png',
+            '../res/img/circle.png',
+            ''
         ])
         .load(() => {
 
@@ -84,7 +88,7 @@ export class Game {
 
     const itemsDomain = resources[`../res/maps/${this.level}/settings.json`].data.items;
 
-    this.map = new Map(GAME_WIDTH, GAME_HEIGHT, this.camera, this.level, ALL_ITEMS, itemsDomain);
+    this.map = new Map(GAME_WIDTH, GAME_HEIGHT, this.camera, this.level, ALL_ITEMS, itemsDomain, 10);
     
     this.map.tilemap = resources[`../res/maps/${this.level}/map.json`].data;
     this.map.tilesheet = resources[`../res/maps/${this.level}/sprite_sheet.png`].texture;
